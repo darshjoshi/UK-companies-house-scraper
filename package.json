@@ -1,0 +1,22 @@
+{
+    "name": "stagehand-anthropic-company-report",
+    "version": "2.0.0",
+    "type": "module",
+    "main": "server.ts",
+    "scripts": {
+        "start": "npx tsx server.ts",
+        "dev": "npx tsx watch server.ts",
+        "build": "npx tsx --build server.ts"
+    },
+    "dependencies": {
+        "@browserbasehq/stagehand": "^2.4.1",
+        "dotenv": "^16.6.1",
+        "express": "^4.21.2",
+        "zod": "^3.25.76"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.23",
+        "@types/node": "^24.1.0",
+        "tsx": "^4.20.3"
+    }
+}
