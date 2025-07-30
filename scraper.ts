@@ -8,6 +8,7 @@ interface FilingData {
   description: string;
   type: string;
   status: string;
+  filingCode?: string;
   documentLinks: DocumentLink[];
 }
 
@@ -16,6 +17,7 @@ interface DocumentLink {
   linkType: string;
   url: string;
   pageCount?: string;
+  filingTypeCode?: string;
 }
 
 interface ScrapingResult {
@@ -195,8 +197,10 @@ class PDFExtractor {
       return await this.page.evaluate(() => {
         const results: any[] = [];
         
-        // More comprehensive table selectors
+        // Improved table selectors with fhTable ID as priority
         const tableSelectors = [
+          'table#fhTable',
+          'table.full-width-table',
           'table[class*="filing"]',
           'table[class*="history"]',
           'table[class*="results"]',
@@ -214,10 +218,13 @@ class PDFExtractor {
           for (const table of Array.from(tables)) {
             const rows = table.querySelectorAll('tr');
             if (rows.length > 1) {
-              // Check if this looks like a filing table
+              // Improved header detection with more inclusive patterns
               const headerRow = rows[0];
               const headerText = headerRow.textContent?.toLowerCase() || '';
-              if (headerText.includes('date') && (headerText.includes('description') || headerText.includes('view'))) {
+              if (headerText.includes('date') && 
+                 (headerText.includes('description') || 
+                  headerText.includes('view') || 
+                  headerText.includes('download'))) {
                 targetTable = table;
                 console.log(`Found filing table with selector: ${selector}`);
                 break;
@@ -235,15 +242,42 @@ class PDFExtractor {
         const rows = targetTable.querySelectorAll('tr');
         console.log(`Processing ${rows.length} rows from filing table`);
   
+        // Try to identify the filing type column index
+        const headerRow = rows[0];
+        const headerCells = headerRow.querySelectorAll('th');
+        let typeColumnIndex = -1;
+        let dateColumnIndex = 0;
+        let descColumnIndex = 1;
+        let linksColumnIndex = headerCells.length - 1;
+        
+        // Map header positions
+        for (let i = 0; i < headerCells.length; i++) {
+          const headerText = headerCells[i].textContent?.toLowerCase() || '';
+          if (headerText.includes('type')) {
+            typeColumnIndex = i;
+          } else if (headerText.includes('date')) {
+            dateColumnIndex = i;
+          } else if (headerText.includes('description')) {
+            descColumnIndex = i;
+          } else if (headerText.includes('view') || headerText.includes('download')) {
+            linksColumnIndex = i;
+          }
+        }
+
         for (let i = 1; i < rows.length; i++) { // Skip header row
           const row = rows[i];
           const cells = row.querySelectorAll('td, th');
   
           if (cells.length >= 3) {
-            const dateCell = cells[0];
-            const descriptionCell = cells[1];
-            // The links are typically in the last cell
-            const linksCell = cells[cells.length - 1];
+            const dateCell = cells[dateColumnIndex];
+            const descriptionCell = cells[descColumnIndex];
+            const linksCell = cells[linksColumnIndex];
+            
+            // Optional: Extract filing type code if available
+            let filingTypeCode = '';
+            if (typeColumnIndex >= 0 && typeColumnIndex < cells.length) {
+              filingTypeCode = cells[typeColumnIndex]?.textContent?.trim() || '';
+            }
   
             const date = dateCell?.textContent?.trim() || '';
             const description = descriptionCell?.textContent?.trim() || '';
@@ -256,6 +290,11 @@ class PDFExtractor {
             // Extract all links from the links cell
             const linkElements = linksCell.querySelectorAll('a[href]');
             const documentLinks: any[] = [];
+  
+            // Look for page count in the cell itself (not just in the link text)
+            const cellText = linksCell.textContent || '';
+            const cellPageMatch = cellText.match(/\((\d+)\s+pages?\)/i);
+            let defaultPageCount = cellPageMatch ? cellPageMatch[1] : '';
   
             Array.from(linkElements).forEach((link: Element) => {
               const href = link.getAttribute('href');
@@ -270,31 +309,37 @@ class PDFExtractor {
                   fullUrl = `https://find-and-update.company-information.service.gov.uk/${href}`;
                 }
   
-                // Determine document type
+                // Improved document type detection
                 let linkType = 'PDF';
-                if (linkText.toLowerCase().includes('ixbrl') || href.includes('format=xhtml')) {
+                if (linkText.toLowerCase().includes('ixbrl') || 
+                    href.includes('format=xhtml') || 
+                    href.includes('xhtml&download=1')) {
                   linkType = 'iXBRL';
-                } else if (linkText.toLowerCase().includes('xml')) {
+                } else if (linkText.toLowerCase().includes('xml') || 
+                          href.includes('format=xml')) {
                   linkType = 'XML';
                 }
   
-                // Extract page count from link text
-                const pageMatch = linkText.match(/(\d+)\s+pages?/i);
-                const pageCount = pageMatch ? pageMatch[1] : '';
+                // Extract page count from link text or use default from cell
+                const linkPageMatch = linkText.match(/(\d+)\s+pages?/i);
+                const pageCount = linkPageMatch ? linkPageMatch[1] : defaultPageCount;
   
-                // Only include valid document links
+                // Enhanced document link detection
                 if (fullUrl.includes('company-information.service.gov.uk') && 
                     (linkText.toLowerCase().includes('pdf') || 
                      linkText.toLowerCase().includes('view') || 
                      linkText.toLowerCase().includes('download') ||
                      linkText.toLowerCase().includes('ixbrl') ||
-                     href.includes('document?format='))) {
+                     href.includes('document?format=') ||
+                     href.includes('format=pdf') ||
+                     href.includes('format=xhtml'))) {
                   
                   documentLinks.push({
                     linkText: linkText,
                     linkType: linkType,
                     url: fullUrl,
-                    pageCount: pageCount
+                    pageCount: pageCount,
+                    filingTypeCode: filingTypeCode
                   });
                 }
               }
@@ -302,12 +347,24 @@ class PDFExtractor {
   
             if (date && description) {
               // Categorize filing type
-              const type = this.categorizeFilingType(description);
+              let type = this.categorizeFilingType(description);
+              
+              // Use the filing type code if available and categorization is generic
+              if (filingTypeCode && type === 'Other') {
+                // Common Companies House filing codes
+                if (filingTypeCode === 'AA') type = 'Annual Accounts';
+                if (filingTypeCode === 'CS01') type = 'Confirmation Statement';
+                if (filingTypeCode === 'NEWINC') type = 'Incorporation';
+                if (filingTypeCode === 'TM01') type = 'Termination of Appointment';
+                if (filingTypeCode === 'AP01') type = 'Appointment';
+                if (filingTypeCode === 'CH01') type = 'Director Change';
+              }
               
               results.push({
                 date: date,
                 description: description,
                 type: type,
+                filingCode: filingTypeCode,
                 status: 'Filed',
                 documentLinks: documentLinks
               });
