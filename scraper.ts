@@ -126,320 +126,396 @@ class ScraperUtils {
 
 // Enhanced PDF extraction class with fixed DOM extraction
 class PDFExtractor {
-    private page: any;
-  
-    constructor(page: any) {
-      this.page = page;
-    }
-  
-    async debugPageContent(): Promise<void> {
-      console.log("=== DEBUG: PAGE CONTENT ANALYSIS ===");
-      
-      const analysis = await this.page.evaluate(() => {
-        const tables = document.querySelectorAll('table');
-        const results = {
-          url: window.location.href,
-          title: document.title,
-          tableCount: tables.length,
-          tables: [] as any[]
+  private page: any;
+
+  constructor(page: any) {
+    this.page = page;
+  }
+
+  async debugPageContent(): Promise<void> {
+    console.log("=== DEBUG: PAGE CONTENT ANALYSIS ===");
+    
+    const analysis = await this.page.evaluate(() => {
+      const tables = document.querySelectorAll('table');
+      const results: any = {
+        url: window.location.href,
+        title: document.title,
+        tableCount: tables.length,
+        tables: [] as any[]
+      };
+
+      // Add specific analysis for fhTable
+      const filingTable = document.getElementById('fhTable');
+      if (filingTable) {
+        results['filingTableFound'] = true;
+        results['pdfLinks'] = Array.from(filingTable.querySelectorAll('a.download')).map((link: any) => ({
+          text: link.textContent.trim(),
+          href: link.getAttribute('href')
+        }));
+      } else {
+        results['filingTableFound'] = false;
+      }
+
+      // Analyze tables for debugging
+      tables.forEach((table, tableIndex) => {
+        const rows = table.querySelectorAll('tr');
+        const tableInfo = {
+          index: tableIndex,
+          id: table.id || 'no-id',
+          rowCount: rows.length,
+          sampleRows: [] as any[]
         };
-  
-        tables.forEach((table, tableIndex) => {
-          const rows = table.querySelectorAll('tr');
-          const tableInfo = {
-            index: tableIndex,
-            rowCount: rows.length,
-            sampleRows: [] as any[]
-          };
-  
-          // Analyze first few rows
-          for (let i = 0; i < Math.min(rows.length, 3); i++) {
-            const row = rows[i];
-            const cells = row.querySelectorAll('td, th');
-            const rowInfo = {
-              index: i,
-              cellCount: cells.length,
-              cells: [] as any[]
-            };
-  
-            cells.forEach((cell, cellIndex) => {
-              const links = cell.querySelectorAll('a[href]');
-              rowInfo.cells.push({
-                index: cellIndex,
-                text: cell.textContent?.trim().substring(0, 100),
-                linkCount: links.length,
-                links: Array.from(links).map(link => ({
-                  text: link.textContent?.trim(),
-                  href: link.getAttribute('href')
-                }))
-              });
-            });
-  
-            tableInfo.sampleRows.push(rowInfo);
-          }
-  
-          results.tables.push(tableInfo);
-        });
-  
-        return results;
-      });
-  
-      console.log("Page analysis:", JSON.stringify(analysis, null, 2));
-    }
-  
-    async extractWithDirectDOM(): Promise<FilingData[]> {
-      console.log("Extracting PDF links using direct DOM manipulation...");
-      
-      await this.debugPageContent();
-  
-      return await this.page.evaluate(() => {
-        const results: any[] = [];
-        
-        // More comprehensive table selectors
-        const tableSelectors = [
-          'table[class*="filing"]',
-          'table[class*="history"]',
-          'table[class*="results"]',
-          'table[summary*="filing"]',
-          'table[summary*="history"]',
-          'table',
-          'tbody'
-        ];
-  
-        let targetTable: Element | null = null;
-        
-        // Find the table with filing data
-        for (const selector of tableSelectors) {
-          const tables = document.querySelectorAll(selector);
-          for (const table of Array.from(tables)) {
-            const rows = table.querySelectorAll('tr');
-            if (rows.length > 1) {
-              // Check if this looks like a filing table
-              const headerRow = rows[0];
-              const headerText = headerRow.textContent?.toLowerCase() || '';
-              if (headerText.includes('date') && (headerText.includes('description') || headerText.includes('view'))) {
-                targetTable = table;
-                console.log(`Found filing table with selector: ${selector}`);
-                break;
-              }
-            }
-          }
-          if (targetTable) break;
-        }
-  
-        if (!targetTable) {
-          console.log('No filing table found with standard selectors');
-          return [];
-        }
-  
-        const rows = targetTable.querySelectorAll('tr');
-        console.log(`Processing ${rows.length} rows from filing table`);
-  
-        for (let i = 1; i < rows.length; i++) { // Skip header row
+
+        // Analyze first few rows
+        for (let i = 0; i < Math.min(rows.length, 3); i++) {
           const row = rows[i];
           const cells = row.querySelectorAll('td, th');
-  
-          if (cells.length >= 3) {
-            const dateCell = cells[0];
-            const descriptionCell = cells[1];
-            // The links are typically in the last cell
-            const linksCell = cells[cells.length - 1];
-  
-            const date = dateCell?.textContent?.trim() || '';
-            const description = descriptionCell?.textContent?.trim() || '';
-  
-            // Validate date format (should match "DD MMM YYYY" pattern)
-            if (!date || !date.match(/\d{1,2}\s+\w+\s+\d{4}/)) {
-              continue;
-            }
-  
-            // Extract all links from the links cell
-            const linkElements = linksCell.querySelectorAll('a[href]');
-            const documentLinks: any[] = [];
-  
-            Array.from(linkElements).forEach((link: Element) => {
-              const href = link.getAttribute('href');
-              const linkText = link.textContent?.trim() || '';
-  
-              if (href && linkText) {
-                // Construct full URL
-                let fullUrl = href;
-                if (href.startsWith('/')) {
-                  fullUrl = `https://find-and-update.company-information.service.gov.uk${href}`;
-                } else if (!href.startsWith('http')) {
-                  fullUrl = `https://find-and-update.company-information.service.gov.uk/${href}`;
-                }
-  
-                // Determine document type
-                let linkType = 'PDF';
-                if (linkText.toLowerCase().includes('ixbrl') || href.includes('format=xhtml')) {
-                  linkType = 'iXBRL';
-                } else if (linkText.toLowerCase().includes('xml')) {
-                  linkType = 'XML';
-                }
-  
-                // Extract page count from link text
-                const pageMatch = linkText.match(/(\d+)\s+pages?/i);
-                const pageCount = pageMatch ? pageMatch[1] : '';
-  
-                // Only include valid document links
-                if (fullUrl.includes('company-information.service.gov.uk') && 
-                    (linkText.toLowerCase().includes('pdf') || 
-                     linkText.toLowerCase().includes('view') || 
-                     linkText.toLowerCase().includes('download') ||
-                     linkText.toLowerCase().includes('ixbrl') ||
-                     href.includes('document?format='))) {
-                  
-                  documentLinks.push({
-                    linkText: linkText,
-                    linkType: linkType,
-                    url: fullUrl,
-                    pageCount: pageCount
-                  });
-                }
-              }
+          const rowInfo = {
+            index: i,
+            cellCount: cells.length,
+            cells: [] as any[]
+          };
+
+          cells.forEach((cell, cellIndex) => {
+            const links = cell.querySelectorAll('a[href]');
+            rowInfo.cells.push({
+              index: cellIndex,
+              text: cell.textContent?.trim().substring(0, 100),
+              linkCount: links.length,
+              links: Array.from(links).map((link: any) => ({
+                text: link.textContent?.trim(),
+                href: link.getAttribute('href'),
+                classes: link.getAttribute('class')
+              }))
             });
-  
-            if (date && description) {
-              // Categorize filing type
-              const type = this.categorizeFilingType(description);
-              
-              results.push({
-                date: date,
-                description: description,
-                type: type,
-                status: 'Filed',
-                documentLinks: documentLinks
-              });
-            }
-          }
+          });
+
+          tableInfo.sampleRows.push(rowInfo);
         }
-  
-        console.log(`DOM extraction found ${results.length} filings`);
-        return results;
+
+        results.tables.push(tableInfo);
       });
-    }
-  
-    // Helper method to categorize filing types
-    private categorizeFilingType(description: string): string {
-      const desc = description.toLowerCase();
-      if (desc.includes("confirmation statement")) return "Confirmation Statement";
-      if (desc.includes("annual return")) return "Annual Return";
-      if (desc.includes("accounts") && desc.includes("micro")) return "Micro Company Accounts";
-      if (desc.includes("accounts") && desc.includes("small")) return "Small Company Accounts";
-      if (desc.includes("accounts") && desc.includes("dormant")) return "Dormant Company Accounts";
-      if (desc.includes("accounts")) return "Company Accounts";
-      if (desc.includes("incorporation")) return "Incorporation";
-      if (desc.includes("appointment")) return "Officer Appointment";
-      if (desc.includes("termination") || desc.includes("resignation")) return "Officer Termination";
-      if (desc.includes("change") && desc.includes("details")) return "Officer Details Change";
-      if (desc.includes("resolution")) return "Resolution";
-      if (desc.includes("charge")) return "Charge Registration";
-      return "Other";
-    }
-  
-    async extractWithLLM(): Promise<FilingData[]> {
-      console.log("Extracting PDF links using LLM...");
-  
-      try {
-        const result = await this.page.extract({
-          instruction: `Extract filing history from the table on this page. For each filing row, extract:
-          1. Date (first column) - must be a valid date format
-          2. Description (second column) - the filing description
-          3. Document links (last column) - ALL links including "View PDF", "Download iXBRL", etc.
-          
-          IMPORTANT: Include the complete URL for each document link. Look for links that contain:
-          - "View PDF"
-          - "Download iXBRL" 
-          - "View" or "Download"
-          - Any document-related links
-          
-          Pay special attention to href attributes that contain "document?format=" as these are the actual document links.
-          
-          Return ALL filings found in the table.`,
-          schema: z.object({
-            filings: z.array(z.object({
-              date: z.string().describe("Filing date"),
-              description: z.string().describe("Filing description"),
-              documentLinks: z.array(z.object({
-                linkText: z.string().describe("Link text (e.g., 'View PDF')"),
-                url: z.string().describe("Complete URL to the document"),
-                linkType: z.string().describe("Type of document (PDF, iXBRL, etc.)"),
-                pageCount: z.string().optional().describe("Number of pages if available")
-              })).describe("All document links for this filing")
-            }))
-          })
-        });
-  
-        // Post-process URLs to ensure they're complete
-        const processedFilings = result.filings.map(filing => ({
-          ...filing,
-          type: this.categorizeFilingType(filing.description),
-          status: 'Filed',
-          documentLinks: filing.documentLinks.map(link => {
-            let url = link.url;
-            if (url && url.startsWith('/')) {
-              url = `https://find-and-update.company-information.service.gov.uk${url}`;
-            }
-            
-            // Determine link type if not provided
-            let linkType = link.linkType;
-            if (!linkType) {
-              if (link.linkText.toLowerCase().includes('ixbrl') || url.includes('format=xhtml')) {
-                linkType = 'iXBRL';
-              } else if (link.linkText.toLowerCase().includes('xml')) {
-                linkType = 'XML';
-              } else {
-                linkType = 'PDF';
-              }
-            }
-  
-            return {
-              ...link,
-              url: url,
-              linkType: linkType
-            };
-          }).filter(link => link.url && link.url.length > 10)
-        }));
-  
-        console.log(`LLM extraction found ${processedFilings.length} filings`);
-        return processedFilings;
-  
-      } catch (error) {
-        console.log("LLM extraction failed:", error.message);
+
+      return results;
+    });
+
+    console.log("Page analysis:", JSON.stringify(analysis, null, 2));
+  }
+
+  async extractWithDirectDOM(): Promise<FilingData[]> {
+    console.log("Extracting PDF links using enhanced direct DOM manipulation...");
+    
+    await this.debugPageContent();
+
+    return await this.page.evaluate(() => {
+      const results: any[] = [];
+      
+      // Target the Companies House filing table specifically
+      const filingTable = document.getElementById('fhTable');
+      if (!filingTable) {
+        console.log('Filing table (fhTable) not found');
         return [];
       }
-    }
-  
-    async extractWithMultipleStrategies(): Promise<FilingData[]> {
-      const strategies = [
-        { name: 'Direct DOM', method: () => this.extractWithDirectDOM() },
-        { name: 'LLM', method: () => this.extractWithLLM() }
-      ];
-  
-      for (const strategy of strategies) {
-        try {
-          console.log(`Trying ${strategy.name} extraction strategy...`);
-          const results = await strategy.method();
+      
+      // Get all rows except the header
+      const rows = Array.from(filingTable.querySelectorAll('tr')).slice(1);
+      console.log(`Processing ${rows.length} rows from filing table`);
+      
+      for (const row of rows) {
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 3) continue;
+        
+        const dateCell = cells[0];
+        const typeCell = cells.length > 3 ? cells[1] : null; // Type column may be hidden
+        const descriptionCell = cells.length > 3 ? cells[2] : cells[1];
+        const linksCell = cells[cells.length - 1]; // Last cell contains PDF links
+        
+        const date = dateCell?.textContent?.trim() || '';
+        const description = descriptionCell?.textContent?.trim() || '';
+        const type = typeCell?.textContent?.trim() || '';
+        
+        // Validate date format (should match "DD MMM YYYY" pattern)
+        if (!date || !date.match(/\d{1,2}\s+\w+\s+\d{4}/)) {
+          continue;
+        }
+        
+        // Extract all PDF links from the links cell
+        // Companies House uses specific classes for their PDF links
+        const linkElements = linksCell.querySelectorAll('a.download.link-updater-js');
+        const documentLinks: any[] = [];
+        
+        Array.from(linkElements).forEach((link: Element) => {
+          const href = link.getAttribute('href');
+          const linkText = link.textContent?.trim() || '';
           
-          if (results && results.length > 0) {
-            console.log(`${strategy.name} strategy succeeded with ${results.length} filings`);
+          if (href && linkText) {
+            // Construct full URL
+            let fullUrl = href;
+            if (href.startsWith('/')) {
+              fullUrl = `https://find-and-update.company-information.service.gov.uk${href}`;
+            }
             
-            // Validate that we have actual PDF links
-            const filingsWithPDFs = results.filter(f => f.documentLinks && f.documentLinks.length > 0);
-            console.log(`${filingsWithPDFs.length} filings have document links`);
+            // Determine document type
+            let linkType = 'PDF';
+            if (linkText.toLowerCase().includes('ixbrl') || href.includes('format=xhtml')) {
+              linkType = 'iXBRL';
+            } else if (linkText.toLowerCase().includes('xml')) {
+              linkType = 'XML';
+            }
             
-            return results;
+            // Extract page count from parent element text
+            // Companies House shows this as "(X pages)" after the link
+            const parentText = link.parentElement?.textContent || '';
+            const pageMatch = parentText.match(/\((\d+)\s+pages?\)/i);
+            const pageCount = pageMatch ? pageMatch[1] : '';
+            
+            documentLinks.push({
+              linkText: linkText,
+              linkType: linkType,
+              url: fullUrl,
+              pageCount: pageCount
+            });
           }
-        } catch (error) {
-          console.log(`${strategy.name} strategy failed:`, error.message);
+        });
+        
+        if (date && description) {
+          // Categorize filing type if not explicitly provided
+          const filingType = type || this.categorizeFilingType(description);
+          
+          results.push({
+            date: date,
+            description: description,
+            type: filingType,
+            status: 'Filed',
+            documentLinks: documentLinks
+          });
         }
       }
-  
-      console.log("All PDF extraction strategies failed");
+      
+      console.log(`DOM extraction found ${results.length} filings with ${results.reduce((sum, filing) => sum + filing.documentLinks.length, 0)} PDF links`);
+      return results;
+    });
+  }
+
+  async extractWithLLM(): Promise<FilingData[]> {
+    console.log("Extracting PDF links using LLM with z.string().url() type...");
+
+    try {
+      const result = await this.page.extract({
+        instruction: `Extract the filing history table from this Companies House page. 
+        For each filing row, extract:
+        1. Date (first column) - must be in format like "01 Jan 2024"
+        2. Description (the filing description, usually in bold)
+        3. Document links in the last column - Extract ALL "View PDF" links
+        
+        IMPORTANT: 
+        - Each PDF link appears in the last column of the table
+        - The links have class "download" and usually say "View PDF"
+        - Extract the COMPLETE URL for each document link
+        - Look for page count information that appears in parentheses after the link (e.g., "(3 pages)")
+        
+        The table ID is "fhTable" and contains all the filing history information.`,
+        schema: z.object({
+          filings: z.array(z.object({
+            date: z.string().describe("Filing date (e.g., '01 Dec 2022')"),
+            description: z.string().describe("Filing description (e.g., 'Confirmation statement made on 1 December 2022')"),
+            documentLinks: z.array(z.object({
+              linkText: z.string().describe("Link text (e.g., 'View PDF')"),
+              url: z.string().url().describe("Complete URL to the document"),
+              pageCount: z.string().optional().describe("Number of pages if available (e.g., '3')")
+            })).describe("All document links for this filing")
+          }))
+        })
+      });
+
+      // Post-process the extracted data
+      const processedFilings = result.filings.map(filing => {
+        // Categorize the filing type based on description
+        const type = this.categorizeFilingType(filing.description);
+        
+        // Process document links
+        const processedLinks = filing.documentLinks.map(link => {
+          let url = link.url;
+          // Ensure URL is complete
+          if (url && url.startsWith('/')) {
+            url = `https://find-and-update.company-information.service.gov.uk${url}`;
+          }
+          
+          // Determine link type if not already specified
+          let linkType = 'PDF';
+          if (link.linkText?.toLowerCase().includes('ixbrl') || url.includes('format=xhtml')) {
+            linkType = 'iXBRL';
+          } else if (link.linkText?.toLowerCase().includes('xml')) {
+            linkType = 'XML';
+          }
+          
+          return {
+            linkText: link.linkText || 'View Document',
+            url: url,
+            linkType: linkType,
+            pageCount: link.pageCount || ''
+          };
+        }).filter(link => link.url && link.url.length > 10);
+        
+        return {
+          date: filing.date,
+          description: filing.description,
+          type: type,
+          status: 'Filed',
+          documentLinks: processedLinks
+        };
+      });
+
+      console.log(`LLM extraction found ${processedFilings.length} filings with ${processedFilings.reduce((sum, filing) => sum + filing.documentLinks.length, 0)} PDF links`);
+      return processedFilings;
+    } catch (error) {
+      console.log("LLM extraction failed:", error.message);
       return [];
     }
   }
+
+  // Helper method to categorize filing types
+  private categorizeFilingType(description: string): string {
+    const desc = description.toLowerCase();
+    if (desc.includes("confirmation statement")) return "Confirmation Statement";
+    if (desc.includes("annual return")) return "Annual Return";
+    if (desc.includes("accounts") && desc.includes("micro")) return "Micro Company Accounts";
+    if (desc.includes("accounts") && desc.includes("small")) return "Small Company Accounts";
+    if (desc.includes("accounts") && desc.includes("dormant")) return "Dormant Company Accounts";
+    if (desc.includes("accounts")) return "Company Accounts";
+    if (desc.includes("incorporation")) return "Incorporation";
+    if (desc.includes("appointment")) return "Officer Appointment";
+    if (desc.includes("termination") || desc.includes("resignation")) return "Officer Termination";
+    if (desc.includes("change") && desc.includes("details")) return "Officer Details Change";
+    if (desc.includes("resolution")) return "Resolution";
+    if (desc.includes("charge")) return "Charge Registration";
+    return "Other";
+  }
+
+  // New hybrid approach that combines DOM structure knowledge with LLM extraction
+  private async extractWithHybridApproach(): Promise<FilingData[]> {
+    console.log("Using hybrid DOM+LLM approach for extraction...");
+    
+    // First, use DOM to get the table structure
+    const tableStructure = await this.page.evaluate(() => {
+      const filingTable = document.getElementById('fhTable');
+      if (!filingTable) return null;
+      
+      // Get basic structure
+      const rows = Array.from(filingTable.querySelectorAll('tr')).slice(1);
+      return rows.map(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 3) return null;
+        
+        const date = cells[0]?.textContent?.trim() || '';
+        const description = cells.length > 3 ? cells[2]?.textContent?.trim() : cells[1]?.textContent?.trim() || '';
+        
+        // Get link cell HTML to pass to LLM
+        const linkCell = cells[cells.length - 1];
+        const linkCellHTML = linkCell ? linkCell.innerHTML : '';
+        
+        return { date, description, linkCellHTML };
+      }).filter(Boolean);
+    });
+    
+    if (!tableStructure || tableStructure.length === 0) {
+      console.log("No table structure found");
+      return [];
+    }
+    
+    // Now use LLM to extract links from the HTML of each link cell
+    const filings: FilingData[] = [];
+    
+    for (const row of tableStructure) {
+      try {
+        // Use LLM to extract links from the HTML
+        const linkResult = await this.page.extract({
+          instruction: `Extract all PDF links from the following HTML of a table cell.
+          The HTML contains links to PDF documents on Companies House.
+          Look for <a> tags with class "download" and extract the complete URL and link text.
+          Also look for page count info which appears in parentheses like "(3 pages)".
+          
+          HTML to analyze: ${row.linkCellHTML}`,
+          schema: z.object({
+            links: z.array(z.object({
+              url: z.string().url().describe("The URL of the PDF document"),
+              text: z.string().describe("The text of the link"),
+              pageCount: z.string().optional().describe("Number of pages")
+            }))
+          })
+        });
+        
+        // Process the links
+        const documentLinks = linkResult.links.map(link => {
+          let url = link.url;
+          if (url && url.startsWith('/')) {
+            url = `https://find-and-update.company-information.service.gov.uk${url}`;
+          }
+          
+          let linkType = 'PDF';
+          if (link.text?.toLowerCase().includes('ixbrl') || url.includes('format=xhtml')) {
+            linkType = 'iXBRL';
+          }
+          
+          return {
+            linkText: link.text || 'View Document',
+            url: url,
+            linkType: linkType,
+            pageCount: link.pageCount || ''
+          };
+        });
+        
+        // Add to filings array
+        if (row.date && row.description) {
+          filings.push({
+            date: row.date,
+            description: row.description,
+            type: this.categorizeFilingType(row.description),
+            status: 'Filed',
+            documentLinks: documentLinks
+          });
+        }
+      } catch (error) {
+        console.log(`Error extracting links from row: ${error.message}`);
+        // Continue with next row
+      }
+    }
+    
+    return filings;
+  }
+
+  async extractWithMultipleStrategies(): Promise<FilingData[]> {
+    // Try more reliable strategies first, then fall back to others
+    const strategies = [
+      { name: 'Direct DOM', method: () => this.extractWithDirectDOM() },
+      { name: 'LLM with URL type', method: () => this.extractWithLLM() },
+      { name: 'Hybrid Approach', method: () => this.extractWithHybridApproach() }
+    ];
+
+    for (const strategy of strategies) {
+      try {
+        console.log(`Trying ${strategy.name} extraction strategy...`);
+        const results = await strategy.method();
+        
+        if (results && results.length > 0) {
+          // Validate that we have actual PDF links
+          const filingsWithPDFs = results.filter(f => f.documentLinks && f.documentLinks.length > 0);
+          console.log(`${strategy.name} strategy succeeded with ${results.length} filings, ${filingsWithPDFs.length} have document links`);
+          
+          if (filingsWithPDFs.length > 0) {
+            return results;
+          }
+          console.log(`${strategy.name} found filings but no PDF links, trying next strategy...`);
+        }
+      } catch (error) {
+        console.log(`${strategy.name} strategy failed:`, error.message);
+      }
+    }
+
+    console.log("All PDF extraction strategies failed");
+    return [];
+  }
+}
 
 // Enhanced navigation class
 class Navigator {
@@ -617,11 +693,19 @@ class CompaniesHouseScraper {
     console.log("Extracting filing history...");
 
     try {
+      // First navigate to Filing history section
       await this.navigator.navigateToSection("Filing history");
       
+      // Wait for page to fully load, including any JS scripts
+      await ScraperUtils.waitForPageLoad(this.page);
+      // Extra delay to ensure all dynamic content is loaded
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Use the multi-strategy approach for robust extraction
       const filings = await this.pdfExtractor.extractWithMultipleStrategies();
       
       if (filings.length === 0) {
+        console.log("No filings found");
         return null;
       }
 
@@ -630,6 +714,8 @@ class CompaniesHouseScraper {
       
       // Calculate date range
       const dateRange = this.calculateDateRange(filings);
+
+      console.log(`Successfully extracted ${filings.length} filings with ${statistics.filingsWithDocuments} PDF documents`);
 
       return {
         filings: filings,
@@ -846,6 +932,47 @@ export async function runEnhancedCompaniesScraper(companyName: string): Promise<
   try {
     await scraper.initialize();
     return await scraper.scrapeCompany(companyName);
+  } finally {
+    await scraper.close();
+  }
+}
+
+//? Export functions for testing
+export async function testPDFExtraction(companyNumber: string): Promise<any> {
+  const scraper = new CompaniesHouseScraper();
+  
+  try {
+    await scraper.initialize();
+    
+    // Go directly to the company filing history page
+    await scraper.page.goto(`https://find-and-update.company-information.service.gov.uk/company/${companyNumber}/filing-history`);
+    await ScraperUtils.waitForPageLoad(scraper.page);
+    
+    // Extract using all strategies for comparison
+    const directDOMResults = await scraper.pdfExtractor.extractWithDirectDOM();
+    const llmResults = await scraper.pdfExtractor.extractWithLLM();
+    const hybridResults = await scraper.pdfExtractor.extractWithHybridApproach();
+    
+    return {
+      companyNumber,
+      results: {
+        directDOM: {
+          filingCount: directDOMResults.length,
+          pdfLinks: directDOMResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
+          sampleUrls: directDOMResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+        },
+        llm: {
+          filingCount: llmResults.length,
+          pdfLinks: llmResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
+          sampleUrls: llmResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+        },
+        hybrid: {
+          filingCount: hybridResults.length,
+          pdfLinks: hybridResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
+          sampleUrls: hybridResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+        }
+      }
+    };
   } finally {
     await scraper.close();
   }

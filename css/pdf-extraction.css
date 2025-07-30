@@ -1,0 +1,229 @@
+.filing-table-container {
+    background: var(--card-background);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    grid-column: 1 / -1;
+    margin-bottom: 2rem;
+}
+
+.filing-table-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    padding: 1.5rem 2rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pdf-success-indicator {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.filing-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.filing-table th,
+.filing-table td {
+    padding: 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
+}
+
+.filing-table th {
+    background: rgba(37, 99, 235, 0.05);
+    font-weight: 700;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.filing-table tr:hover {
+    background: rgba(37, 99, 235, 0.02);
+}
+
+.filing-date {
+    font-weight: 700;
+    color: var(--primary-color);
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.filing-type-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-accounts { 
+    background: rgba(5, 150, 105, 0.1); 
+    color: #047857; 
+    border: 1px solid #047857; 
+}
+
+.type-confirmation { 
+    background: rgba(37, 99, 235, 0.1); 
+    color: #1d4ed8; 
+    border: 1px solid #1d4ed8; 
+}
+
+.type-officers { 
+    background: rgba(217, 119, 6, 0.1); 
+    color: #b45309; 
+    border: 1px solid #b45309; 
+}
+
+.type-charges { 
+    background: rgba(220, 38, 38, 0.1); 
+    color: #b91c1c; 
+    border: 1px solid #b91c1c; 
+}
+
+.type-other { 
+    background: rgba(100, 116, 139, 0.1); 
+    color: #475569; 
+    border: 1px solid #475569; 
+}
+
+.filing-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 400px;
+}
+
+.pdf-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--danger-color), #b91c1c);
+    color: white;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-link:hover {
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+.pdf-link.ixbrl {
+    background: linear-gradient(135deg, var(--success-color), #047857);
+}
+
+.pdf-link.ixbrl:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+
+.pdf-link.no-link {
+    background: var(--secondary-color);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.pdf-link.no-link:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.page-count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.diagnostic-panel {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.diagnostic-panel h3 {
+    color: #212529;
+    margin-top: 0;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.diagnostic-content {
+    padding: 1rem 0;
+}
+
+.success { color: #198754; font-weight: bold; }
+.warning { color: #fd7e14; font-weight: bold; }
+.error { color: #dc3545; font-weight: bold; }
+
+.test-results {
+    margin-top: 1rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+}
+
+.test-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.test-results-table th, 
+.test-results-table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.test-results-table th {
+    background: #f1f3f5;
+}
+
+.url-cell {
+    max-width: 300px;
+    word-break: break-all;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.test-error {
+    color: #dc3545;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 4px;
+}
+
+.pdf-test-button {
+    margin-top: 1rem;
+}
