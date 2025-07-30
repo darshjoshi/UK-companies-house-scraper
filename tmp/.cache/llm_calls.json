@@ -833,5 +833,570 @@
     },
     "timestamp": 1753909600645,
     "requestId": "k4fk3llpw6m"
+  },
+  "1e2cd64d1cc1bc5d09ef7fb0a86ae08e7a8df6b647b06ee1df0478afd220f1d0": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-83",
+            "description": "Button to accept analytics cookies in the cookie banner",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2806,
+        "completion_tokens": 179,
+        "total_tokens": 2985
+      }
+    },
+    "timestamp": 1753911477846,
+    "requestId": "47mqo5is1m7"
+  },
+  "334abd90345e8ef8d6922fd56a64e350b7293c5dd572493137f3b448444b9806": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-4",
+            "description": "searchbox input field with label 'Enter company name, number or officer name'",
+            "method": "fill",
+            "arguments": [
+              "Amazon UK Services"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2729,
+        "completion_tokens": 165,
+        "total_tokens": 2894
+      }
+    },
+    "timestamp": 1753911486478,
+    "requestId": "hvq2rcs1orv"
+  },
+  "a37a981746620ae97fa68b8b72f72cbb4e90597dae039aaaaabb7c029f4d96d1": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-5",
+            "description": "Search button in the main search section",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2734,
+        "completion_tokens": 177,
+        "total_tokens": 2911
+      }
+    },
+    "timestamp": 1753911491651,
+    "requestId": "ukbrof3booi"
+  },
+  "b43775afffd400bdebba62c637280e8b20e62466b9a9dc08eca5b566bde27a05": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-527",
+            "description": "Link to AMAZON UK SERVICES LTD. - first company result",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5303,
+        "completion_tokens": 185,
+        "total_tokens": 5488
+      }
+    },
+    "timestamp": 1753911500919,
+    "requestId": "51br92fsyh7"
+  },
+  "cd065dcc982e9e3a706d1cf4b74df90331ce664b63aa99dbd010f30af87b837f": {
+    "data": {
+      "data": {
+        "companyName": "AMAZON UK SERVICES LTD.",
+        "companyNumber": "03223028",
+        "status": "Active",
+        "companyType": "Private limited Company",
+        "incorporationDate": "10 July 1996",
+        "registeredAddress": "1 Principal Place, Worship Street, London, EC2A 2FA"
+      },
+      "usage": {
+        "prompt_tokens": 3050,
+        "completion_tokens": 207,
+        "total_tokens": 3257
+      }
+    },
+    "timestamp": 1753911509928,
+    "requestId": "cwi1jldt2md"
+  },
+  "cf163a207d6b08a940497360ef67d3f0ca5b2ce212ad165a96141f4214e74248": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "1067",
+            "description": "Link for Filing history for AMAZON UK SERVICES LTD. (03223028)",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3452,
+        "completion_tokens": 175,
+        "total_tokens": 3627
+      }
+    },
+    "timestamp": 1753911514676,
+    "requestId": "vvjzzvatt"
+  },
+  "da798100c1f81d82934293c14dcf38684c7d9bd6fd53ebfb061884873472df9c": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-1621",
+            "description": "Link containing 'People' text that leads to people information for AMAZON UK SERVICES LTD",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 6123,
+        "completion_tokens": 181,
+        "total_tokens": 6304
+      }
+    },
+    "timestamp": 1753911564550,
+    "requestId": "emyodhdlwmt"
+  },
+  "d4d9867f5318b901dc5a19342c9b8d67092b3efcbb03e1d5d0b15efed4fbb66e": {
+    "data": {
+      "data": {
+        "officers": [
+          {
+            "name": "ANDREWS, Phaedra Ann",
+            "role": "Director",
+            "appointmentDate": "1 May 2015",
+            "nationality": "American",
+            "occupation": "Finance Director, Accounting"
+          },
+          {
+            "name": "ATKIN, Mark Christopher",
+            "role": "Director",
+            "appointmentDate": "20 May 2019",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "COOPER, Anna Elisabeth",
+            "role": "Director",
+            "appointmentDate": "14 June 2023",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "FYFE, Nicola",
+            "role": "Director",
+            "appointmentDate": "30 June 2023",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "COLLINS, Vincent",
+            "role": "Secretary",
+            "appointmentDate": "1 April 2008",
+            "resignationDate": "31 January 2011",
+            "nationality": "British",
+            "occupation": "Manager"
+          },
+          {
+            "name": "HORBURY, William",
+            "role": "Secretary",
+            "appointmentDate": "12 September 1997",
+            "resignationDate": "30 January 1998",
+            "nationality": "British"
+          },
+          {
+            "name": "MELVILLE, David Charles",
+            "role": "Secretary",
+            "appointmentDate": "1 January 2006",
+            "resignationDate": "1 April 2008",
+            "nationality": "British"
+          },
+          {
+            "name": "MILLER, Michael",
+            "role": "Secretary",
+            "appointmentDate": "1 December 1999",
+            "resignationDate": "1 January 2006",
+            "nationality": "British"
+          },
+          {
+            "name": "MINSHULL BEECH, Amanda Jane",
+            "role": "Secretary",
+            "appointmentDate": "1 October 1998",
+            "resignationDate": "1 December 1999",
+            "nationality": "British"
+          },
+          {
+            "name": "PATRIARCA, Alison Carol",
+            "role": "Secretary",
+            "appointmentDate": "30 January 1998",
+            "resignationDate": "1 October 1998",
+            "nationality": "British",
+            "occupation": "Finance Director"
+          },
+          {
+            "name": "TORRINGTON, Geoffrey David",
+            "role": "Secretary",
+            "appointmentDate": "10 July 1996",
+            "resignationDate": "12 September 1997",
+            "nationality": "British"
+          },
+          {
+            "name": "CHETTLEBURGH INTERNATIONAL LIMITED",
+            "role": "Nominee Secretary",
+            "appointmentDate": "10 July 1996",
+            "resignationDate": "10 July 1996"
+          },
+          {
+            "name": "MITRE SECRETARIES LIMITED",
+            "role": "Secretary",
+            "appointmentDate": "3 February 2006",
+            "resignationDate": "15 July 2024"
+          },
+          {
+            "name": "ARMSTRONG, Stuart",
+            "role": "Director",
+            "appointmentDate": "9 February 1998",
+            "resignationDate": "17 April 1998",
+            "nationality": "British",
+            "occupation": "Company Director"
+          },
+          {
+            "name": "BENNETTS, Roy Stephen",
+            "role": "Director",
+            "appointmentDate": "1 October 1998",
+            "resignationDate": "27 September 1999",
+            "nationality": "British",
+            "occupation": "Chartered Accountant"
+          },
+          {
+            "name": "BYRNE, Allister John",
+            "role": "Director",
+            "appointmentDate": "15 October 2010",
+            "resignationDate": "11 December 2012",
+            "nationality": "British",
+            "occupation": "Finance Director"
+          },
+          {
+            "name": "BYRUM, Leesa Colleen",
+            "role": "Director",
+            "appointmentDate": "1 September 1999",
+            "resignationDate": "12 January 2000",
+            "nationality": "American",
+            "occupation": "Executive Director"
+          },
+          {
+            "name": "CAPLAN, Alan",
+            "role": "Director",
+            "appointmentDate": "1 May 1998",
+            "resignationDate": "27 September 1999",
+            "nationality": "American",
+            "occupation": "Attorney"
+          },
+          {
+            "name": "CASTRO RODRIGUEZ, George",
+            "role": "Director",
+            "appointmentDate": "7 February 2017",
+            "resignationDate": "19 April 2017",
+            "nationality": "Spanish",
+            "occupation": "Senior Corporate Counsel"
+          },
+          {
+            "name": "COVEY, Joy",
+            "role": "Director",
+            "appointmentDate": "1 May 1998",
+            "resignationDate": "27 September 1999",
+            "nationality": "American",
+            "occupation": "Cfo"
+          },
+          {
+            "name": "DEAL, Michael David",
+            "role": "Director",
+            "appointmentDate": "17 June 2005",
+            "resignationDate": "26 February 2015",
+            "nationality": "American",
+            "occupation": "Associate General Cousel"
+          },
+          {
+            "name": "FYFE, Nicola",
+            "role": "Director",
+            "appointmentDate": "6 April 2018",
+            "resignationDate": "1 February 2019",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "GAL, Jonatan",
+            "role": "Director",
+            "appointmentDate": "3 May 2021",
+            "resignationDate": "30 June 2023",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "HEMMING, Mark Anthony",
+            "role": "Director",
+            "appointmentDate": "6 February 2019",
+            "resignationDate": "15 May 2019",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "JENSON, Warren Calvin",
+            "role": "Director",
+            "appointmentDate": "27 September 1999",
+            "resignationDate": "26 June 2002",
+            "nationality": "American",
+            "occupation": "Chief Financial Officer"
+          },
+          {
+            "name": "LYALL, Allan",
+            "role": "Director",
+            "appointmentDate": "15 January 2004",
+            "resignationDate": "1 April 2008",
+            "nationality": "British",
+            "occupation": "Vice President"
+          },
+          {
+            "name": "MACKENZIE, Robert Mario",
+            "role": "Director",
+            "appointmentDate": "31 May 2012",
+            "resignationDate": "5 March 2018",
+            "nationality": "British",
+            "occupation": "Solicitor"
+          },
+          {
+            "name": "MCBRIDE, Brian James",
+            "role": "Director",
+            "appointmentDate": "1 June 2007",
+            "resignationDate": "17 February 2011",
+            "nationality": "British",
+            "occupation": "Amazon Com United Kingdom Coun"
+          },
+          {
+            "name": "MCCABE, Shaun",
+            "role": "Director",
+            "appointmentDate": "1 April 2008",
+            "resignationDate": "15 October 2010",
+            "nationality": "British",
+            "occupation": "Manager"
+          },
+          {
+            "name": "MCWILLIAM, Robert Gerard",
+            "role": "Director",
+            "appointmentDate": "1 April 2013",
+            "resignationDate": "1 May 2015",
+            "nationality": "British",
+            "occupation": "Finance Director"
+          },
+          {
+            "name": "MINSHULL BEECH, Amanda Jane",
+            "role": "Director",
+            "appointmentDate": "4 November 1999",
+            "resignationDate": "31 May 2007",
+            "nationality": "British",
+            "occupation": "Financial Director"
+          },
+          {
+            "name": "MORGAN, Stuart Paul",
+            "role": "Director",
+            "appointmentDate": "3 March 2020",
+            "resignationDate": "20 November 2024",
+            "nationality": "British",
+            "occupation": "Director"
+          },
+          {
+            "name": "MURDOCH, Simon Thomas, Dr",
+            "role": "Director",
+            "appointmentDate": "1 August 1997",
+            "resignationDate": "20 September 1999",
+            "nationality": "British",
+            "occupation": "Software Manager"
+          },
+          {
+            "name": "NORTH, Christopher Corson",
+            "role": "Director",
+            "appointmentDate": "17 February 2011",
+            "resignationDate": "1 May 2015",
+            "nationality": "British",
+            "occupation": "Vice President, Uk Country Manager"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 19305,
+        "completion_tokens": 2502,
+        "total_tokens": 21807
+      }
+    },
+    "timestamp": 1753911604494,
+    "requestId": "khsz24oeoqa"
+  },
+  "df57a3cfb863d85007b919cb556df9020a652891a22901c31dfa6f0eeb79baf5": {
+    "data": {
+      "data": {
+        "progress": "Extracted complete list of 33 company officers including directors and secretaries with full details (names, roles, appointment dates, resignation dates, nationalities, and occupations where available)",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 3036,
+        "completion_tokens": 316,
+        "total_tokens": 3352
+      }
+    },
+    "timestamp": 1753911611366,
+    "requestId": "khsz24oeoqa"
+  },
+  "662e6d02250de07e9bdc0f57ca5c5c2a70718bef61d1926ce3c6ff07a5094ce4": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-2243",
+            "description": "Link to Charges section for AMAZON UK SERVICES LTD.",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 19683,
+        "completion_tokens": 159,
+        "total_tokens": 19842
+      }
+    },
+    "timestamp": 1753911617246,
+    "requestId": "j1lrji9trb"
+  },
+  "c928a54b49166f45b589fda0c2238a15fc44e557e1cee3d459a36d63f07cf57b": {
+    "data": {
+      "data": {
+        "charges": [
+          {
+            "description": "All and whole the subjects known as and forming plot 4…",
+            "status": "Outstanding",
+            "createdDate": "15 March 2025",
+            "chargeholder": "Strawson J4M8 Limited"
+          },
+          {
+            "description": "None…",
+            "status": "Outstanding",
+            "createdDate": "23 December 2021",
+            "chargeholder": "Peddimore Management Company Limited"
+          },
+          {
+            "description": "The deposit account, the amount now standing to the credit…",
+            "status": "Outstanding",
+            "createdDate": "22 June 2004",
+            "chargeholder": "Patriot Court Slough Limited"
+          },
+          {
+            "description": "The deposit initially of 213,541 euros credited to account…",
+            "status": "Outstanding",
+            "createdDate": "14 October 2002",
+            "chargeholder": "National Westminster Bank PLC"
+          },
+          {
+            "description": "The sum of £397,737 maintained in an interest earning…",
+            "status": "Outstanding",
+            "createdDate": "28 September 2000",
+            "chargeholder": "Slough Trading Estate Limited"
+          },
+          {
+            "description": "The deposit account, the amount standing to the credit of…",
+            "status": "Outstanding",
+            "createdDate": "29 August 2000",
+            "chargeholder": "The London County Freehold and Leasehold Properties Limited"
+          },
+          {
+            "description": "£18,750.",
+            "status": "Outstanding",
+            "createdDate": "10 May 1999",
+            "chargeholder": "Midland Bank PLC"
+          },
+          {
+            "description": "The sum of £397,737 maintained from time to time in an…",
+            "status": "Satisfied",
+            "createdDate": "21 July 1998",
+            "chargeholder": "Tremco Limited"
+          },
+          {
+            "description": "The sum of £397,737 maintained in an interest earning…",
+            "status": "Satisfied",
+            "createdDate": "21 July 1998",
+            "chargeholder": "Slough Trading Estate Limited"
+          },
+          {
+            "description": "L/Hold property known as 86-88 bestobell road trading…",
+            "status": "Satisfied",
+            "createdDate": "21 July 1998",
+            "chargeholder": "Tremco Limited"
+          },
+          {
+            "description": "All right title benefit and interest whatsoever in a…",
+            "status": "Satisfied",
+            "createdDate": "21 July 1998",
+            "chargeholder": "Tremco Limited"
+          },
+          {
+            "description": "All rights title benefit and interest whatsoever in a…",
+            "status": "Satisfied",
+            "createdDate": "21 July 1998",
+            "chargeholder": "Tremco Limited"
+          },
+          {
+            "description": "Fixed and floating charges over all undertaking property…",
+            "status": "Satisfied",
+            "createdDate": "9 February 1998",
+            "chargeholder": "Agop Tanielian"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 7252,
+        "completion_tokens": 914,
+        "total_tokens": 8166
+      }
+    },
+    "timestamp": 1753911636406,
+    "requestId": "x2aa4k23rf"
+  },
+  "d0197ab6ebd447b9aac0782d16c993df7e62a740517496acaf723d3d416bf6f8": {
+    "data": {
+      "data": {
+        "progress": "Found 13 charges: 7 outstanding and 6 satisfied charges. Outstanding charges held by various entities including Strawson J4M8 Limited, Peddimore Management Company Limited, and others. Satisfied charges mainly held by Tremco Limited.",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 1445,
+        "completion_tokens": 333,
+        "total_tokens": 1778
+      }
+    },
+    "timestamp": 1753911642361,
+    "requestId": "x2aa4k23rf"
   }
 }

@@ -151,8 +151,8 @@ function displayEnhancedStatistics(stats) {
                 <div class="stat-label">Total PDF Pages</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${Object.keys(stats.filingTypes || {}).length}</div>
-                <div class="stat-label">Filing Types</div>
+                <div class="stat-number">${stats.pagesScraped || 1}</div>
+                <div class="stat-label">Pages Scraped</div>
             </div>
         </div>
     `;

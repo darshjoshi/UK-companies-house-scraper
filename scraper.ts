@@ -689,38 +689,223 @@ class CompaniesHouseScraper {
     }
   }
 
-  async extractFilingHistory(): Promise<any> {
+  // New pagination methods
+  private async hasNextFilingPage(): Promise<boolean> {
+    try {
+      // Check if there's a "Next" link or an enabled "Next" button
+      const hasNextPage = await this.page.evaluate(() => {
+        const nextLink = document.querySelector('a#next-page:not([aria-disabled="true"])');
+        return !!nextLink;
+      });
+      
+      return hasNextPage;
+    } catch (error) {
+      console.warn("Error checking for next page:", error.message);
+      return false;
+    }
+  }
+
+  private async navigateToNextFilingPage(): Promise<void> {
+    try {
+      // Click the "Next" link/button using act
+      await this.page.act("Click on the 'Next' link or button");
+      
+      // Double-check if click worked
+      const clickResult = await this.page.evaluate(() => {
+        const nextLink = document.querySelector('a#next-page:not([aria-disabled="true"])');
+        if (nextLink) {
+          (nextLink as HTMLElement).click();
+          return true;
+        }
+        return false;
+      });
+      
+      if (!clickResult) {
+        console.log("Next button click with act() and direct DOM didn't work, trying URL-based navigation");
+        
+        // Fallback to URL-based navigation
+        const currentUrl = this.page.url();
+        let nextPageNum = 1;
+        
+        // Extract current page number if present
+        const pageMatch = currentUrl.match(/[?&]page=(\d+)/);
+        if (pageMatch) {
+          nextPageNum = parseInt(pageMatch[1]) + 1;
+        } else {
+          nextPageNum = 2; // We're on page 1, so next is page 2
+        }
+        
+        // Construct URL for next page
+        const nextUrl = currentUrl.includes('?') 
+          ? currentUrl.replace(/([?&]page=\d+)|$/, `&page=${nextPageNum}`)
+          : `${currentUrl}?page=${nextPageNum}`;
+        
+        console.log(`Navigating to next page URL: ${nextUrl}`);
+        await this.page.goto(nextUrl);
+      }
+      
+      console.log("Navigated to next filing page");
+      return;
+    } catch (error) {
+      throw new Error(`Failed to navigate to next filing page: ${error.message}`);
+    }
+  }
+
+  private async getTotalPageCount(): Promise<number> {
+    try {
+      // Try to determine total number of pages
+      const pageCount = await this.page.evaluate(() => {
+        // Look for pagination links and get the highest number
+        const pageLinks = Array.from(document.querySelectorAll('.govuk-pagination__item a[data-page]'));
+        if (pageLinks.length === 0) return 1;
+        
+        let maxPage = 1;
+        pageLinks.forEach(link => {
+          const pageNum = parseInt((link as HTMLElement).getAttribute('data-page') || '1');
+          if (pageNum > maxPage) maxPage = pageNum;
+        });
+        
+        return maxPage;
+      });
+      
+      return pageCount || 1;
+    } catch (error) {
+      console.warn("Error determining page count:", error.message);
+      return 1; // Assume at least 1 page
+    }
+  }
+
+  private async navigateToFilingPage(pageNumber: number): Promise<void> {
+    try {
+      // First, check if we're already on that page
+      const currentPage = await this.getCurrentFilingPage();
+      if (currentPage === pageNumber) {
+        console.log(`Already on filing page ${pageNumber}`);
+        return;
+      }
+      
+      // Try to click the page number directly
+      const clickedPage = await this.page.evaluate((pageNum) => {
+        const pageLink = document.querySelector(`a#pageNo${pageNum}[data-page="${pageNum}"]`);
+        if (pageLink) {
+          (pageLink as HTMLElement).click();
+          return true;
+        }
+        return false;
+      }, pageNumber);
+      
+      if (clickedPage) {
+        console.log(`Clicked on page ${pageNumber} link`);
+        await ScraperUtils.waitForPageLoad(this.page);
+        return;
+      }
+      
+      // Fallback to URL-based navigation
+      const currentUrl = this.page.url();
+      const baseUrl = currentUrl.split('?')[0];
+      await this.page.goto(`${baseUrl}?page=${pageNumber}`);
+      console.log(`Navigated to page ${pageNumber} via URL`);
+      await ScraperUtils.waitForPageLoad(this.page);
+    } catch (error) {
+      throw new Error(`Failed to navigate to filing page ${pageNumber}: ${error.message}`);
+    }
+  }
+
+  private async getCurrentFilingPage(): Promise<number> {
+    try {
+      // Try to determine current page number
+      const currentPage = await this.page.evaluate(() => {
+        // Look for current page in URL
+        const pageMatch = window.location.href.match(/[?&]page=(\d+)/);
+        if (pageMatch) return parseInt(pageMatch[1]);
+        
+        // Look for active pagination item
+        const activePage = document.querySelector('.govuk-pagination__item--current a[data-page]');
+        if (activePage) return parseInt(activePage.getAttribute('data-page') || '1');
+        
+        return 1; // Default to page 1
+      });
+      
+      return currentPage || 1;
+    } catch (error) {
+      console.warn("Error determining current page:", error.message);
+      return 1; // Assume page 1
+    }
+  }
+
+  // Enhanced filing history extraction with pagination support
+  async extractFilingHistory(maxPages: number = 10): Promise<any> {
     console.log("Extracting filing history...");
 
     try {
       // First navigate to Filing history section
       await this.navigator.navigateToSection("Filing history");
       
-      // Wait for page to fully load, including any JS scripts
+      // Wait for page to fully load
       await ScraperUtils.waitForPageLoad(this.page);
-      // Extra delay to ensure all dynamic content is loaded
-      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Use the multi-strategy approach for robust extraction
-      const filings = await this.pdfExtractor.extractWithMultipleStrategies();
+      // Get an estimate of total pages (this helps us decide on the extraction strategy)
+      const estimatedTotalPages = await this.getTotalPageCount();
+      console.log(`Estimated total filing pages: ${estimatedTotalPages}`);
       
-      if (filings.length === 0) {
-        console.log("No filings found");
+      // Initialize an array to store filings from all pages
+      let allFilings: FilingData[] = [];
+      let pagesScraped = 0;
+      
+      // Limit the number of pages to scan to avoid excessive processing
+      const pagesToScan = Math.min(estimatedTotalPages, maxPages);
+      
+      // Process all pages
+      for (let pageNum = 1; pageNum <= pagesToScan; pageNum++) {
+        console.log(`Processing filing history page ${pageNum}/${pagesToScan}...`);
+        
+        // Navigate to the specific page (this handles page 1 correctly too)
+        if (pageNum > 1) {
+          await this.navigateToFilingPage(pageNum);
+        }
+        
+        // Add a small delay to ensure the page loads
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        await ScraperUtils.waitForPageLoad(this.page);
+        
+        // Extract filings from current page
+        const pageFilings = await this.pdfExtractor.extractWithMultipleStrategies();
+        pagesScraped++;
+        
+        if (pageFilings && pageFilings.length > 0) {
+          // Add filings from this page to our collection
+          allFilings = [...allFilings, ...pageFilings];
+          console.log(`Extracted ${pageFilings.length} filings from page ${pageNum}, total: ${allFilings.length}`);
+        } else {
+          console.log(`No filings found on page ${pageNum}`);
+          
+          // If we couldn't extract any filings from this page, it might mean we've reached the end
+          // Let's verify by checking if the page actually exists
+          const currentPage = await this.getCurrentFilingPage();
+          if (currentPage !== pageNum) {
+            console.log(`Expected page ${pageNum}, but on page ${currentPage}. Stopping pagination.`);
+            break;
+          }
+        }
+      }
+      
+      if (allFilings.length === 0) {
+        console.log("No filings found across any pages");
         return null;
       }
 
-      // Calculate statistics
-      const statistics = this.calculateFilingStatistics(filings);
+      // Calculate statistics across all pages
+      const statistics = this.calculateFilingStatistics(allFilings);
       
       // Calculate date range
-      const dateRange = this.calculateDateRange(filings);
+      const dateRange = this.calculateDateRange(allFilings);
 
-      console.log(`Successfully extracted ${filings.length} filings with ${statistics.filingsWithDocuments} PDF documents`);
+      console.log(`Successfully extracted ${allFilings.length} filings with ${statistics.filingsWithDocuments} PDF documents across ${pagesScraped} pages`);
 
       return {
-        filings: filings,
-        totalFilings: filings.length,
-        pagesScraped: 1, // Single page for now
+        filings: allFilings,
+        totalFilings: allFilings.length,
+        pagesScraped: pagesScraped,
         statistics: statistics,
         dateRange: dateRange
       };
@@ -880,7 +1065,8 @@ class CompaniesHouseScraper {
     return Math.max(0, Math.min(100, score));
   }
 
-  async scrapeCompany(companyName: string): Promise<ScrapingResult> {
+  // Updated to accept maxFilingPages parameter
+  async scrapeCompany(companyName: string, maxFilingPages: number = 10): Promise<ScrapingResult> {
     const startTime = Date.now();
     
     const result: ScrapingResult = {
@@ -896,7 +1082,7 @@ class CompaniesHouseScraper {
 
       // Extract all sections
       result.overview = await this.extractOverview();
-      result.filing = await this.extractFilingHistory();
+      result.filing = await this.extractFilingHistory(maxFilingPages);
       result.people = await this.extractPeople();
       result.charges = await this.extractCharges();
 
@@ -925,19 +1111,22 @@ class CompaniesHouseScraper {
   }
 }
 
-// Export function for use in server
-export async function runEnhancedCompaniesScraper(companyName: string): Promise<ScrapingResult> {
+// Updated export function to accept maxFilingPages parameter
+export async function runEnhancedCompaniesScraper(
+  companyName: string,
+  maxFilingPages: number = 10
+): Promise<ScrapingResult> {
   const scraper = new CompaniesHouseScraper();
   
   try {
     await scraper.initialize();
-    return await scraper.scrapeCompany(companyName);
+    return await scraper.scrapeCompany(companyName, maxFilingPages);
   } finally {
     await scraper.close();
   }
 }
 
-//? Export functions for testing
+// Export functions for testing
 export async function testPDFExtraction(companyNumber: string): Promise<any> {
   const scraper = new CompaniesHouseScraper();
   
@@ -958,18 +1147,18 @@ export async function testPDFExtraction(companyNumber: string): Promise<any> {
       results: {
         directDOM: {
           filingCount: directDOMResults.length,
-          pdfLinks: directDOMResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
-          sampleUrls: directDOMResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+          pdfLinks: directDOMResults.reduce((sum, f) => sum + (f?.documentLinks?.length ?? 0), 0),
+          sampleUrls: directDOMResults.slice(0, 3).flatMap(f => f?.documentLinks?.map(l => l?.url) ?? [])
         },
         llm: {
           filingCount: llmResults.length,
-          pdfLinks: llmResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
-          sampleUrls: llmResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+          pdfLinks: llmResults.reduce((sum, f) => sum + (f?.documentLinks?.length ?? 0), 0),
+          sampleUrls: llmResults.slice(0, 3).flatMap(f => f?.documentLinks?.map(l => l?.url) ?? [])
         },
         hybrid: {
           filingCount: hybridResults.length,
-          pdfLinks: hybridResults.reduce((sum, f) => sum + (f.documentLinks?.length || 0), 0),
-          sampleUrls: hybridResults.slice(0, 3).flatMap(f => f.documentLinks?.map(l => l.url) || [])
+          pdfLinks: hybridResults.reduce((sum, f) => sum + (f?.documentLinks?.length ?? 0), 0),
+          sampleUrls: hybridResults.slice(0, 3).flatMap(f => f?.documentLinks?.map(l => l?.url) ?? [])
         }
       }
     };

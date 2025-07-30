@@ -208,6 +208,77 @@
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
+/* Client-side pagination styles */
+.client-pagination {
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-buttons button {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.pagination-buttons button:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
+}
+
+#current-page {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Max pages control */
+.max-pages-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-right: 1rem;
+}
+
+.max-pages-select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: white;
+}
+
+.tooltip-icon {
+    cursor: help;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
 
 @media (max-width: 768px) {
     .data-grid {

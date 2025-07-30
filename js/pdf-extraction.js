@@ -24,6 +24,7 @@ function showPDFExtractionStats(data) {
                 </p>
                 <p><strong>Filings with PDFs:</strong> ${stats.filingsWithPDFs} / ${stats.totalFilings}</p>
                 <p><strong>Total PDF Pages:</strong> ${stats.totalPDFPages}</p>
+                <p><strong>Pages Scraped:</strong> ${stats.pagesScraped || 1}</p>
                 <p><strong>Data Quality Score:</strong> ${qualityScore}/100</p>
                 <div class="pdf-test-button">
                     <button onclick="testPDFExtraction('${companyNumber}')" class="search-button pdf-test-btn">
@@ -44,15 +45,94 @@ function createEnhancedFilingTable(filingData, stats) {
     
     const filings = filingData.filings || [];
     const successRate = stats?.pdfSuccessRate || 0;
+    const pagesScraped = filingData.pagesScraped || 1;
     
+    // Add header with enhanced stats
     container.innerHTML = `
         <div class="filing-table-header">
-            📄 Complete Filing History
+            📄 Complete Filing History (${pagesScraped} pages scraped)
             <div class="pdf-success-indicator">
                 🎯 ${successRate}% PDF Success Rate
             </div>
         </div>
+    `;
+    
+    // For large filing sets, add client-side pagination
+    if (filings.length > 25) {
+        // Create client-side pagination component
+        const paginationContainer = document.createElement('div');
+        paginationContainer.className = 'client-pagination';
         
+        // Add pagination controls
+        const itemsPerPage = 25;
+        const totalPages = Math.ceil(filings.length / itemsPerPage);
+        
+        const paginationControls = document.createElement('div');
+        paginationControls.className = 'pagination-controls';
+        paginationControls.innerHTML = `
+            <div class="pagination-info">
+                Showing <span id="showing-start">1</span>-<span id="showing-end">${Math.min(itemsPerPage, filings.length)}</span> 
+                of ${filings.length} filings
+            </div>
+            <div class="pagination-buttons">
+                <button id="prev-page" disabled>Previous</button>
+                <span id="current-page">Page 1 of ${totalPages}</span>
+                <button id="next-page" ${totalPages <= 1 ? 'disabled' : ''}>Next</button>
+            </div>
+        `;
+        
+        paginationContainer.appendChild(paginationControls);
+        container.appendChild(paginationContainer);
+        
+        // Create table with first page of results
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-container';
+        tableContainer.innerHTML = createFilingTableHTML(filings.slice(0, itemsPerPage));
+        container.appendChild(tableContainer);
+        
+        // Add pagination event handlers after the container is added to the DOM
+        setTimeout(() => {
+            let currentPage = 1;
+            
+            const updateTable = (page) => {
+                const start = (page - 1) * itemsPerPage;
+                const end = Math.min(start + itemsPerPage, filings.length);
+                
+                document.getElementById('showing-start').textContent = start + 1;
+                document.getElementById('showing-end').textContent = end;
+                document.getElementById('current-page').textContent = `Page ${page} of ${totalPages}`;
+                
+                document.getElementById('prev-page').disabled = page === 1;
+                document.getElementById('next-page').disabled = page === totalPages;
+                
+                tableContainer.innerHTML = createFilingTableHTML(filings.slice(start, end));
+            };
+            
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable(currentPage);
+                }
+            });
+            
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable(currentPage);
+                }
+            });
+        }, 0);
+    } else {
+        // For smaller datasets, just show all filings
+        container.innerHTML += createFilingTableHTML(filings);
+    }
+    
+    return container;
+}
+
+// Helper function to create the filing table HTML
+function createFilingTableHTML(filings) {
+    return `
         <table class="filing-table">
             <thead>
                 <tr>
@@ -80,8 +160,6 @@ function createEnhancedFilingTable(filingData, stats) {
             </tbody>
         </table>
     `;
-    
-    return container;
 }
 
 // Create officers card

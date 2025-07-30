@@ -72,6 +72,28 @@ class Validator {
     
     return { valid: true };
   }
+
+  static validateMaxPages(maxPages: any): { valid: boolean; value: number; error?: string } {
+    if (maxPages === undefined || maxPages === null) {
+      return { valid: true, value: 10 }; // Default value
+    }
+    
+    const parsedValue = parseInt(maxPages);
+    
+    if (isNaN(parsedValue)) {
+      return { valid: false, value: 10, error: 'Max pages must be a number' };
+    }
+    
+    if (parsedValue < 1) {
+      return { valid: false, value: 1, error: 'Max pages must be at least 1' };
+    }
+    
+    if (parsedValue > 50) {
+      return { valid: false, value: 50, error: 'Max pages cannot exceed 50 for performance reasons' };
+    }
+    
+    return { valid: true, value: parsedValue };
+  }
 }
 
 // Data quality assessment
@@ -159,6 +181,14 @@ class QualityAssessor {
           recommendations.push("Check if company is still active");
         }
       }
+      
+      // Add bonus for multiple pages scraped
+      if (filingData.pagesScraped > 1) {
+        const multiPageBonus = Math.min(5, filingData.pagesScraped);
+        score += multiPageBonus;
+        // Make sure score doesn't exceed 100
+        score = Math.min(100, score);
+      }
     }
 
     // People/Officers assessment (20 points)
@@ -235,6 +265,7 @@ class StatsCalculator {
       filingsWithPDFs: stats.filingsWithDocuments || 0,
       totalPDFPages: stats.totalDocumentPages || 0,
       pdfSuccessRate: stats.documentSuccessRate || 0,
+      pagesScraped: data.filing.pagesScraped || 1,
       dateRange: data.filing.dateRange,
       filingTypes: stats.filingTypes || {},
       recentFilings: filings.slice(0, 5).map(f => ({
@@ -254,6 +285,7 @@ class StatsCalculator {
       hasCharges: !!(data.charges && data.charges.charges && data.charges.charges.length > 0),
       officerCount: data.people?.officers?.length || 0,
       chargeCount: data.charges?.charges?.length || 0,
+      pagesScraped: data.filing?.pagesScraped || 1,
       extractionTimestamp: data.extractionTimestamp || new Date().toISOString()
     };
   }
@@ -288,6 +320,10 @@ class ErrorHandler {
       statusCode = 500;
       errorCode = 'PDF_EXTRACTION_ERROR';
       userMessage = 'Failed to extract PDF links. Try using a different extraction strategy.';
+    } else if (errorMessage.includes('pagination') || errorMessage.includes('next page')) {
+      statusCode = 500;
+      errorCode = 'PAGINATION_ERROR';
+      userMessage = 'Failed to navigate through filing pages. Try with fewer pages.';
     }
 
     return { statusCode, errorCode, userMessage };
@@ -296,12 +332,21 @@ class ErrorHandler {
 
 // Main API endpoints
 
-// Enhanced report endpoint
+// Enhanced report endpoint - Updated to support maxPages parameter
 app.post('/api/enhanced-report', async (req, res) => {
   const startTime = Date.now();
-  const { company } = req.body;
+  const { company, maxPages } = req.body;
   
-  Logger.info(`Enhanced report request received`, { company });
+  // Validate maxPages parameter
+  const maxPagesValidation = Validator.validateMaxPages(maxPages);
+  const validatedMaxPages = maxPagesValidation.value;
+  
+  if (!maxPagesValidation.valid) {
+    Logger.warn(`Max pages validation failed: ${maxPagesValidation.error}`);
+    // Continue with validated value, but log the warning
+  }
+  
+  Logger.info(`Enhanced report request received`, { company, maxPages: validatedMaxPages });
   
   // Validate input
   const validation = Validator.validateCompanyName(company);
@@ -316,10 +361,10 @@ app.post('/api/enhanced-report', async (req, res) => {
   }
 
   try {
-    Logger.info(`Starting enhanced company scraping for: ${company}`);
+    Logger.info(`Starting enhanced company scraping for: ${company} (max pages: ${validatedMaxPages})`);
     
-    // Run the enhanced scraper with better PDF extraction
-    const rawData = await runEnhancedCompaniesScraper(company.trim());
+    // Run the enhanced scraper with better PDF extraction and multi-page support
+    const rawData = await runEnhancedCompaniesScraper(company.trim(), validatedMaxPages);
     
     // Assess data quality
     const qualityAssessment = QualityAssessor.assessDataQuality(rawData);
@@ -327,7 +372,8 @@ app.post('/api/enhanced-report', async (req, res) => {
     
     Logger.info(`Data extraction completed`, {
       qualityScore: qualityAssessment.score,
-      issueCount: qualityAssessment.issues.length
+      issueCount: qualityAssessment.issues.length,
+      pagesScraped: rawData.filing?.pagesScraped || 1
     });
 
     // Calculate statistics
@@ -340,7 +386,8 @@ app.post('/api/enhanced-report', async (req, res) => {
         totalFilings: filingStats.totalFilings,
         filingsWithPDFs: filingStats.filingsWithPDFs,
         pdfSuccessRate: `${filingStats.pdfSuccessRate}%`,
-        totalPDFPages: filingStats.totalPDFPages
+        totalPDFPages: filingStats.totalPDFPages,
+        pagesScraped: filingStats.pagesScraped
       });
     }
 
@@ -363,7 +410,8 @@ app.post('/api/enhanced-report', async (req, res) => {
     const processingTime = Date.now() - startTime;
     Logger.info(`Enhanced report completed`, { 
       processingTime: `${processingTime}ms`,
-      qualityScore: qualityAssessment.score
+      qualityScore: qualityAssessment.score,
+      pagesScraped: rawData.filing?.pagesScraped || 1
     });
 
     // Enhanced response
@@ -387,7 +435,9 @@ app.post('/api/enhanced-report', async (req, res) => {
           scrapingTime: processingTime,
           aiSummaryGenerated: qualityAssessment.score >= 40,
           cacheEnabled: true,
-          pdfExtractionSuccess: (filingStats?.pdfSuccessRate ?? 0) > 0
+          pdfExtractionSuccess: (filingStats?.pdfSuccessRate ?? 0) > 0,
+          pagesRequested: validatedMaxPages,
+          pagesScraped: rawData.filing?.pagesScraped || 1
         }
       }
     });
@@ -398,6 +448,7 @@ app.post('/api/enhanced-report', async (req, res) => {
     
     Logger.error(`Enhanced report generation failed`, {
       company,
+      maxPages: validatedMaxPages,
       processingTime: `${processingTime}ms`,
       error: error.message,
       stack: error.stack
@@ -411,6 +462,7 @@ app.post('/api/enhanced-report', async (req, res) => {
       metadata: {
         processingTime: `${processingTime}ms`,
         timestamp: new Date().toISOString(),
+        maxPagesRequested: validatedMaxPages,
         errorDetails: {
           type: errorInfo.errorCode,
           originalError: error.message
@@ -546,6 +598,43 @@ app.get('/api/filings/:companyNumber', async (req, res) => {
   }
 });
 
+// New endpoint to get page count estimate for a company
+app.get('/api/page-count-estimate/:companyNumber', async (req, res) => {
+  const { companyNumber } = req.params;
+  
+  Logger.info(`Page count estimate requested for company: ${companyNumber}`);
+  
+  try {
+    // This is a placeholder implementation
+    // In a real implementation, you would make a quick request to
+    // the first page of filing history and check pagination
+    
+    // For now, return a dummy response
+    res.json({
+      success: true,
+      companyNumber,
+      estimatedPageCount: 5,
+      note: "This is an estimated page count. The actual number may vary.",
+      metadata: {
+        timestamp: new Date().toISOString(),
+        estimationMethod: "placeholder"
+      }
+    });
+  } catch (error) {
+    Logger.error(`Page count estimation failed`, {
+      companyNumber,
+      error: error.message
+    });
+    
+    res.status(500).json({
+      success: false,
+      error: `Failed to estimate page count: ${error.message}`,
+      companyNumber,
+      code: 'ESTIMATION_ERROR'
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   const healthStatus = {
@@ -556,6 +645,7 @@ app.get('/api/health', (req, res) => {
     features: [
       'enhanced_pdf_extraction',
       'multi_strategy_scraping', 
+      'multi_page_extraction',
       'quality_assessment',
       'ai_powered_analysis',
       'comprehensive_error_handling',
@@ -581,6 +671,7 @@ app.get('/api/info', (req, res) => {
     features: {
       dataExtraction: [
         'Multi-strategy PDF link extraction',
+        'Multi-page filing history extraction',
         'Comprehensive filing history with document links',
         'Officer and people information',
         'Charges and security interests',
@@ -603,7 +694,10 @@ app.get('/api/info', (req, res) => {
     endpoints: {
       'POST /api/enhanced-report': {
         description: 'Generate comprehensive company report with enhanced PDF extraction',
-        body: { company: 'string (company name)' },
+        body: { 
+          company: 'string (company name)',
+          maxPages: 'number (optional, default: 10, max: 50)'
+        },
         response: 'Complete company analysis with AI summary'
       },
       'POST /api/report': {
@@ -613,6 +707,10 @@ app.get('/api/info', (req, res) => {
       'GET /api/test-pdf-extraction/:companyNumber': {
         description: 'Test PDF extraction capabilities for a specific company',
         response: 'PDF extraction test results and statistics'
+      },
+      'GET /api/page-count-estimate/:companyNumber': {
+        description: 'Get an estimate of the number of filing history pages for a company',
+        response: 'Estimated page count'
       },
       'GET /api/filings/:companyNumber': {
         description: 'Export filing data in various formats',
@@ -631,7 +729,8 @@ app.get('/api/info', (req, res) => {
       extractionStrategies: [
         'Direct DOM manipulation with enhanced selectors',
         'LLM-powered extraction with URL type',
-        'Hybrid approach combining DOM and LLM'
+        'Hybrid approach combining DOM and LLM',
+        'Multi-page navigation and extraction'
       ],
       qualityAssurance: [
         'Automated quality scoring (0-100)',
@@ -645,7 +744,10 @@ app.get('/api/info', (req, res) => {
       basicRequest: {
         method: 'POST',
         url: '/api/enhanced-report',
-        body: { company: 'COMPANY NAME LTD' }
+        body: { 
+          company: 'COMPANY NAME LTD',
+          maxPages: 10
+        }
       },
       rateLimit: 'Intelligent rate limiting to prevent blocking',
       timeout: '60 seconds maximum per request',
@@ -690,6 +792,7 @@ app.listen(PORT, () => {
   
   Logger.info('New features in v3.0.0:', [
     'Multi-strategy PDF extraction',
+    'Multi-page filing history extraction',
     'Enhanced quality assessment',
     'Comprehensive error handling',
     'Performance monitoring',

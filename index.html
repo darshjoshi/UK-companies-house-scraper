@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced UK Company Intelligence v3.0</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pdf-extraction.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pdf-extraction.css">
 </head>
 <body>
     <div class="container">
@@ -44,9 +44,12 @@
             <div class="loading-spinner"></div>
             <h3>🔍 Extracting comprehensive company intelligence...</h3>
             <div class="loading-progress">
-                <div class="loading-progress-bar"></div>
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
             </div>
             <p class="loading-text">
+                Processing <span id="currentPage">page 1</span>...
+            </p>
+            <p class="loading-subtext" id="loadingSubtext">
                 Using multi-strategy extraction with DOM manipulation, LLM processing, and quality assessment
             </p>
         </div>
@@ -66,8 +69,8 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
-    <script src="js/pdf-extraction.js"></script>
-    <script src="js/ui-components.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/pdf-extraction.js"></script>
+    <script src="/js/ui-components.js"></script>
 </body>
 </html>
