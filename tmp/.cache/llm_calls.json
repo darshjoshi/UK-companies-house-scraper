@@ -1398,5 +1398,843 @@
     },
     "timestamp": 1753911642361,
     "requestId": "x2aa4k23rf"
+  },
+  "838fe9eff87b29c16d49116cabfa7959343bb9ce4f7f8926cb0b105627a33612": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-84",
+            "description": "Button to accept analytics cookies in the cookie banner",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2806,
+        "completion_tokens": 179,
+        "total_tokens": 2985
+      }
+    },
+    "timestamp": 1753919191182,
+    "requestId": "h9z9sordu0i"
+  },
+  "d74f0751fd08a94605ef9a338786f8180a812e352ef26ce27739155de4991b11": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-4",
+            "description": "searchbox for entering company name, number or officer name",
+            "method": "fill",
+            "arguments": [
+              "Amazon UK Services"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2729,
+        "completion_tokens": 169,
+        "total_tokens": 2898
+      }
+    },
+    "timestamp": 1753919199585,
+    "requestId": "7jx3ofvy8c"
+  },
+  "535ea64a9af992cf34f5a4aa5f6f34d02503a3b749a21cc9f8f666507904e193": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-6",
+            "description": "Search button in the main search section",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2734,
+        "completion_tokens": 177,
+        "total_tokens": 2911
+      }
+    },
+    "timestamp": 1753919204648,
+    "requestId": "lplqqm2x9nf"
+  },
+  "a50d581da05f50a8d88eb4ccef3c0a03bdd59eb18b112a47b261343c2c2202d4": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-527",
+            "description": "Link to AMAZON UK SERVICES LTD. - first company result",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5303,
+        "completion_tokens": 163,
+        "total_tokens": 5466
+      }
+    },
+    "timestamp": 1753919213413,
+    "requestId": "y6bpddsnocl"
+  },
+  "12eac85f5eb8ea3abcc851533c3dce04051764629f79b00a2dc1588a81713b12": {
+    "data": {
+      "data": {
+        "companyName": "AMAZON UK SERVICES LTD.",
+        "companyNumber": "03223028",
+        "status": "Active",
+        "companyType": "Private limited Company",
+        "incorporationDate": "10 July 1996",
+        "registeredAddress": "1 Principal Place, Worship Street, London, EC2A 2FA"
+      },
+      "usage": {
+        "prompt_tokens": 3051,
+        "completion_tokens": 207,
+        "total_tokens": 3258
+      }
+    },
+    "timestamp": 1753919222260,
+    "requestId": "gvg3lcxfzn"
+  },
+  "26e29e842203879dd0bd8c8b3a7783a398e89f65389676345738a7590b954b3f": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "1066",
+            "description": "Link for filing history for AMAZON UK SERVICES LTD.",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3453,
+        "completion_tokens": 185,
+        "total_tokens": 3638
+      }
+    },
+    "timestamp": 1753919227426,
+    "requestId": "05ylefugwjlq"
+  },
+  "68f69c4e4627e183ff3180d41e04b8c1a00f75c4d821e9228f5d6790dc70fa50": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-1622",
+            "description": "Link containing 'People' that leads to people information for AMAZON UK SERVICES LTD",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 6123,
+        "completion_tokens": 192,
+        "total_tokens": 6315
+      }
+    },
+    "timestamp": 1753919278225,
+    "requestId": "ikfrh2477q"
+  },
+  "2c5f8f724e31ec4d928b973edc1ff7e0ebe24aca539c9d5d87be57919207daf4": {
+    "data": {
+      "data": {
+        "officers": [
+          {
+            "name": "ANDREWS, Phaedra Ann",
+            "role": "Director",
+            "appointmentDate": "1 May 2015",
+            "address": "60 Holborn Viaduct, London, United Kingdom, EC1A 2FD",
+            "nationality": "American",
+            "occupation": "Finance Director, Accounting",
+            "links": [
+              {
+                "linkText": "ANDREWS, Phaedra Ann",
+                "url": "0-2294",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "ATKIN, Mark Christopher",
+            "role": "Director",
+            "appointmentDate": "20 May 2019",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "ATKIN, Mark Christopher",
+                "url": "0-2344",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "COOPER, Anna Elisabeth",
+            "role": "Director",
+            "appointmentDate": "14 June 2023",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "COOPER, Anna Elisabeth",
+                "url": "0-2394",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "FYFE, Nicola",
+            "role": "Director",
+            "appointmentDate": "30 June 2023",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "FYFE, Nicola",
+                "url": "0-2022",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "COLLINS, Vincent",
+            "role": "Secretary",
+            "appointmentDate": "1 April 2008",
+            "resignationDate": "31 January 2011",
+            "address": "Patriot Court, 1-9 The Grove, Slough, Berkshire, SL1 1QP",
+            "nationality": "British",
+            "occupation": "Manager",
+            "links": [
+              {
+                "linkText": "COLLINS, Vincent",
+                "url": "0-2493",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "HORBURY, William",
+            "role": "Secretary",
+            "appointmentDate": "12 September 1997",
+            "resignationDate": "30 January 1998",
+            "address": "Cross Cottage, Cross, Croyde, Braunton, Devon, EX33 1PL",
+            "nationality": "British",
+            "links": [
+              {
+                "linkText": "HORBURY, William",
+                "url": "0-2538",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MELVILLE, David Charles",
+            "role": "Secretary",
+            "appointmentDate": "1 January 2006",
+            "resignationDate": "1 April 2008",
+            "address": "1 Rothsay Road, Bedford, Bedfordshire, MK40 3PW",
+            "nationality": "British",
+            "links": [
+              {
+                "linkText": "MELVILLE, David Charles",
+                "url": "0-2578",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MILLER, Michael",
+            "role": "Secretary",
+            "appointmentDate": "1 December 1999",
+            "resignationDate": "1 January 2006",
+            "address": "47 Windsor Road, Chobham, Surrey, GU24 8LD",
+            "nationality": "British",
+            "links": [
+              {
+                "linkText": "MILLER, Michael",
+                "url": "0-2618",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MINSHULL BEECH, Amanda Jane",
+            "role": "Secretary",
+            "appointmentDate": "1 October 1998",
+            "resignationDate": "1 December 1999",
+            "address": "72 Wokingham Road, Crowthorne, Berkshire, RG45 7QA",
+            "nationality": "British",
+            "links": [
+              {
+                "linkText": "MINSHULL BEECH, Amanda Jane",
+                "url": "0-2658",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "PATRIARCA, Alison Carol",
+            "role": "Secretary",
+            "appointmentDate": "30 January 1998",
+            "resignationDate": "1 October 1998",
+            "address": "13 Berry Way, Rickmansworth, Hertfordshire, WD3 2EU",
+            "nationality": "British",
+            "occupation": "Finance Director",
+            "links": [
+              {
+                "linkText": "PATRIARCA, Alison Carol",
+                "url": "0-2698",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "TORRINGTON, Geoffrey David",
+            "role": "Secretary",
+            "appointmentDate": "10 July 1996",
+            "resignationDate": "12 September 1997",
+            "address": "15 Boltons Lane, Binfield, Bracknell, Berkshire, England, RG42 4UA",
+            "nationality": "British",
+            "links": [
+              {
+                "linkText": "TORRINGTON, Geoffrey David",
+                "url": "0-2743",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "CHETTLEBURGH INTERNATIONAL LIMITED",
+            "role": "Nominee Secretary",
+            "appointmentDate": "10 July 1996",
+            "resignationDate": "10 July 1996",
+            "address": "Temple House, 20 Holywell Row, London, EC2A 4JB",
+            "links": [
+              {
+                "linkText": "CHETTLEBURGH INTERNATIONAL LIMITED",
+                "url": "0-2783",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MITRE SECRETARIES LIMITED",
+            "role": "Secretary",
+            "appointmentDate": "3 February 2006",
+            "resignationDate": "15 July 2024",
+            "address": "Cannon Place, 78, Cannon Street, London, England, EC4N 6AF",
+            "links": [
+              {
+                "linkText": "MITRE SECRETARIES LIMITED",
+                "url": "0-2818",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "ARMSTRONG, Stuart",
+            "role": "Director",
+            "appointmentDate": "9 February 1998",
+            "resignationDate": "17 April 1998",
+            "address": "4 Manor Farm Close, Stone, Aylesbury, Buckinghamshire, HP17 8RQ",
+            "nationality": "British",
+            "occupation": "Company Director",
+            "links": [
+              {
+                "linkText": "ARMSTRONG, Stuart",
+                "url": "0-2862",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "BENNETTS, Roy Stephen",
+            "role": "Director",
+            "appointmentDate": "1 October 1998",
+            "resignationDate": "27 September 1999",
+            "address": "27 Kinghorn Park, Maidenhead, Berkshire, SL6 7TX",
+            "nationality": "British",
+            "occupation": "Chartered Accountant",
+            "links": [
+              {
+                "linkText": "BENNETTS, Roy Stephen",
+                "url": "0-2912",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "BYRNE, Allister John",
+            "role": "Director",
+            "appointmentDate": "15 October 2010",
+            "resignationDate": "11 December 2012",
+            "address": "Patriot Court, 1-9 The Grove, Slough, Berkshire, SL1 1QP",
+            "nationality": "British",
+            "occupation": "Finance Director",
+            "links": [
+              {
+                "linkText": "BYRNE, Allister John",
+                "url": "0-2967",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "BYRUM, Leesa Colleen",
+            "role": "Director",
+            "appointmentDate": "1 September 1999",
+            "resignationDate": "12 January 2000",
+            "address": "4 Riversdale Court, Riversdale, Bourne End, Buckinghamshire, SL8 5EB",
+            "nationality": "American",
+            "occupation": "Executive Director",
+            "links": [
+              {
+                "linkText": "BYRUM, Leesa Colleen",
+                "url": "0-3022",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "CAPLAN, Alan",
+            "role": "Director",
+            "appointmentDate": "1 May 1998",
+            "resignationDate": "27 September 1999",
+            "address": "1531 18th Avenue, Seattle, Washington, Usa, 98112",
+            "nationality": "American",
+            "occupation": "Attorney",
+            "links": [
+              {
+                "linkText": "CAPLAN, Alan",
+                "url": "0-3072",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "CASTRO RODRIGUEZ, George",
+            "role": "Director",
+            "appointmentDate": "7 February 2017",
+            "resignationDate": "19 April 2017",
+            "address": "60 Holborn Viaduct, London, EC1A 2FD",
+            "nationality": "Spanish",
+            "occupation": "Senior Corporate Counsel",
+            "links": [
+              {
+                "linkText": "CASTRO RODRIGUEZ, George",
+                "url": "0-3122",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "COVEY, Joy",
+            "role": "Director",
+            "appointmentDate": "1 May 1998",
+            "resignationDate": "27 September 1999",
+            "address": "3413 264th Se Issaquah 98029, Washington, Usa, FOREIGN",
+            "nationality": "American",
+            "occupation": "Cfo",
+            "links": [
+              {
+                "linkText": "COVEY, Joy",
+                "url": "0-3177",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "DEAL, Michael David",
+            "role": "Director",
+            "appointmentDate": "17 June 2005",
+            "resignationDate": "26 February 2015",
+            "address": "Patriot Court, 1-9 The Grove, Slough, Berkshire, SL1 1QP",
+            "nationality": "American",
+            "occupation": "Associate General Cousel",
+            "links": [
+              {
+                "linkText": "DEAL, Michael David",
+                "url": "0-3227",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "FRAZIER, Steven Charles",
+            "role": "Director",
+            "appointmentDate": "24 February 2000",
+            "resignationDate": "8 November 2001",
+            "address": "Carlessi Cottage, Fireball Hill, Ascot, Berkshire, SL5 9PJ",
+            "nationality": "American",
+            "occupation": "Internet Retailer",
+            "links": [
+              {
+                "linkText": "FRAZIER, Steven Charles",
+                "url": "0-3282",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "FYFE, Nicola",
+            "role": "Director",
+            "appointmentDate": "6 April 2018",
+            "resignationDate": "1 February 2019",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "FYFE, Nicola",
+                "url": "0-3332",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "GAL, Jonatan",
+            "role": "Director",
+            "appointmentDate": "3 May 2021",
+            "resignationDate": "30 June 2023",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "GAL, Jonatan",
+                "url": "0-3387",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "HEMMING, Mark Anthony",
+            "role": "Director",
+            "appointmentDate": "6 February 2019",
+            "resignationDate": "15 May 2019",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "HEMMING, Mark Anthony",
+                "url": "0-3442",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "JENSON, Warren Calvin",
+            "role": "Director",
+            "appointmentDate": "27 September 1999",
+            "resignationDate": "26 June 2002",
+            "address": "1200 12th Avenue South, Suite 1200 Seattle, 98144 Wa Usa, FOREIGN",
+            "nationality": "American",
+            "occupation": "Chief Financial Officer",
+            "links": [
+              {
+                "linkText": "JENSON, Warren Calvin",
+                "url": "0-3497",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "LYALL, Allan",
+            "role": "Director",
+            "appointmentDate": "15 January 2004",
+            "resignationDate": "1 April 2008",
+            "address": "23 Greenfield Avenue, Alloway, Ayr, KA7 4NP",
+            "nationality": "British",
+            "occupation": "Vice President",
+            "links": [
+              {
+                "linkText": "LYALL, Allan",
+                "url": "0-3547",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MACKENZIE, Robert Mario",
+            "role": "Director",
+            "appointmentDate": "31 May 2012",
+            "resignationDate": "5 March 2018",
+            "address": "1 Principal Place, Worship Street, London, EC2A 2FA",
+            "nationality": "British",
+            "occupation": "Solicitor",
+            "links": [
+              {
+                "linkText": "MACKENZIE, Robert Mario",
+                "url": "0-3602",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MCBRIDE, Brian James",
+            "role": "Director",
+            "appointmentDate": "1 June 2007",
+            "resignationDate": "17 February 2011",
+            "address": "Amazon Uk, Patriot Court, 1-9 The Grove, Slough, Berkshire, United Kingdom, SL1 1QP",
+            "nationality": "British",
+            "occupation": "Amazon Com United Kingdom Coun",
+            "links": [
+              {
+                "linkText": "MCBRIDE, Brian James",
+                "url": "0-3657",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MCCABE, Shaun",
+            "role": "Director",
+            "appointmentDate": "1 April 2008",
+            "resignationDate": "15 October 2010",
+            "address": "Patriot Court, 1-9 The Grove, Slough, Berkshire, SL1 1QP",
+            "nationality": "British",
+            "occupation": "Manager",
+            "links": [
+              {
+                "linkText": "MCCABE, Shaun",
+                "url": "0-3712",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MCWILLIAM, Robert Gerard",
+            "role": "Director",
+            "appointmentDate": "1 April 2013",
+            "resignationDate": "1 May 2015",
+            "address": "60 Holborn Viaduct, London, EC1A 2FD",
+            "nationality": "British",
+            "occupation": "Finance Director",
+            "links": [
+              {
+                "linkText": "MCWILLIAM, Robert Gerard",
+                "url": "0-3762",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MINSHULL BEECH, Amanda Jane",
+            "role": "Director",
+            "appointmentDate": "4 November 1999",
+            "resignationDate": "31 May 2007",
+            "address": "72 Wokingham Road, Crowthorne, Berkshire, RG45 7QA",
+            "nationality": "British",
+            "occupation": "Financial Director",
+            "links": [
+              {
+                "linkText": "MINSHULL BEECH, Amanda Jane",
+                "url": "0-3817",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MORGAN, Stuart Paul",
+            "role": "Director",
+            "appointmentDate": "3 March 2020",
+            "resignationDate": "20 November 2024",
+            "address": "Ema1 Amazon Fulfillment Centre, Unit 1, Wilders Way, East Midlands Gateway, Derby, England, DE74 2BB",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "MORGAN, Stuart Paul",
+                "url": "0-3867",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "MURDOCH, Simon Thomas, Dr",
+            "role": "Director",
+            "appointmentDate": "1 August 1997",
+            "resignationDate": "20 September 1999",
+            "address": "Allingham Manor, Headley Road, Grayshott, Hindhead, Surrey, GU26 6EJ",
+            "nationality": "British",
+            "occupation": "Software Manager",
+            "links": [
+              {
+                "linkText": "MURDOCH, Simon Thomas, Dr",
+                "url": "0-3922",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "NORTH, Christopher Corson",
+            "role": "Director",
+            "appointmentDate": "17 February 2011",
+            "resignationDate": "1 May 2015",
+            "address": "60 Holborn Viaduct, London, EC1A 2FD",
+            "nationality": "British",
+            "occupation": "Vice President, Uk Country Manager",
+            "links": [
+              {
+                "linkText": "NORTH, Christopher Corson",
+                "url": "0-3972",
+                "linkType": "profile"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 19618,
+        "completion_tokens": 5355,
+        "total_tokens": 24973
+      }
+    },
+    "timestamp": 1753919355932,
+    "requestId": "cslby9amwfq"
+  },
+  "bebc257c5f368b9dfe292e206bcdd3828539aa0ea33e0614c839bf9e3d43e30c": {
+    "data": {
+      "data": {
+        "progress": "Successfully extracted 33 officers with complete information including names, roles, dates, addresses and associated links",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 6041,
+        "completion_tokens": 253,
+        "total_tokens": 6294
+      }
+    },
+    "timestamp": 1753919361855,
+    "requestId": "cslby9amwfq"
+  },
+  "0ec4e8ad7b3324c9bca7fc49d1ad070abd26cb7dcd32fe65fd1cbbcef7179562": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-2246",
+            "description": "Link containing 'Charges' text for AMAZON UK SERVICES LTD.",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 19683,
+        "completion_tokens": 199,
+        "total_tokens": 19882
+      }
+    },
+    "timestamp": 1753919368365,
+    "requestId": "zlg0d4l3npo"
+  },
+  "1e2e71daa3f78a9a2ae966bfe1d9b625d95aa8e0e6ea6be855f2a759841d68f8": {
+    "data": {
+      "data": {
+        "charges": [
+          {
+            "description": "All and whole the subjects known as and forming plot 4…",
+            "status": "Outstanding",
+            "chargeholder": "Strawson J4M8 Limited",
+            "createdDate": "15 March 2025"
+          },
+          {
+            "description": "None…",
+            "status": "Outstanding",
+            "chargeholder": "Peddimore Management Company Limited",
+            "createdDate": "23 December 2021"
+          },
+          {
+            "description": "The deposit account, the amount now standing to the credit…",
+            "status": "Outstanding",
+            "chargeholder": "Patriot Court Slough Limited",
+            "createdDate": "22 June 2004"
+          },
+          {
+            "description": "The deposit initially of 213,541 euros credited to account…",
+            "status": "Outstanding",
+            "chargeholder": "National Westminster Bank PLC",
+            "createdDate": "14 October 2002"
+          },
+          {
+            "description": "The sum of £397,737 maintained in an interest earning…",
+            "status": "Outstanding",
+            "chargeholder": "Slough Trading Estate Limited",
+            "createdDate": "28 September 2000"
+          },
+          {
+            "description": "The deposit account, the amount standing to the credit of…",
+            "status": "Outstanding",
+            "chargeholder": "The London County Freehold and Leasehold Properties Limited",
+            "createdDate": "29 August 2000"
+          },
+          {
+            "description": "£18,750.",
+            "status": "Outstanding",
+            "chargeholder": "Midland Bank PLC",
+            "createdDate": "10 May 1999"
+          },
+          {
+            "description": "The sum of £397,737 maintained from time to time in an…",
+            "status": "Satisfied",
+            "chargeholder": "Tremco Limited",
+            "createdDate": "21 July 1998"
+          },
+          {
+            "description": "The sum of £397,737 maintained in an interest earning…",
+            "status": "Satisfied",
+            "chargeholder": "Slough Trading Estate Limited",
+            "createdDate": "21 July 1998"
+          },
+          {
+            "description": "L/Hold property known as 86-88 bestobell road trading…",
+            "status": "Satisfied",
+            "chargeholder": "Tremco Limited",
+            "createdDate": "21 July 1998"
+          },
+          {
+            "description": "All right title benefit and interest whatsoever in a…",
+            "status": "Satisfied",
+            "chargeholder": "Tremco Limited",
+            "createdDate": "21 July 1998"
+          },
+          {
+            "description": "All rights title benefit and interest whatsoever in a…",
+            "status": "Satisfied",
+            "chargeholder": "Tremco Limited",
+            "createdDate": "21 July 1998"
+          },
+          {
+            "description": "Fixed and floating charges over all undertaking property…",
+            "status": "Satisfied",
+            "chargeholder": "Agop Tanielian",
+            "createdDate": "9 February 1998"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 7252,
+        "completion_tokens": 914,
+        "total_tokens": 8166
+      }
+    },
+    "timestamp": 1753919387805,
+    "requestId": "shmp50nrb1n"
   }
 }

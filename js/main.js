@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function extractCompanyData() {
     const companyName = document.getElementById('companyInput').value.trim();
+    const maxPages = document.getElementById('maxPages')?.value || 10;
+    const maxPeoplePages = document.getElementById('maxPeoplePages')?.value || 5;
     const loadingSection = document.getElementById('loadingSection');
     const resultsContainer = document.getElementById('resultsContainer');
     const searchButton = document.getElementById('searchButton');
@@ -20,11 +22,18 @@ async function extractCompanyData() {
     searchButton.disabled = true;
     searchButton.textContent = 'Extracting...';
 
+    // Start progress simulation
+    simulateProgressForLongExtraction(parseInt(maxPages));
+
     try {
         const response = await fetch('/api/enhanced-report', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ company: companyName })
+            body: JSON.stringify({ 
+                company: companyName,
+                maxPages: parseInt(maxPages),
+                maxPeoplePages: parseInt(maxPeoplePages)
+            })
         });
 
         const result = await response.json();
@@ -77,8 +86,16 @@ function displayResults(data) {
         dataGrid.appendChild(createOverviewCard(data.data.overview));
     }
 
+    // Enhanced people display with clickable links
     if (data.data.people && data.data.people.officers && data.data.people.officers.length > 0) {
-        dataGrid.appendChild(createOfficersCard(data.data.people.officers));
+        // Add enhanced people card with clickable links
+        dataGrid.appendChild(UIComponents.createEnhancedPeopleCard(data.data.people));
+        
+        // Add people statistics card
+        const peopleStatsCard = UIComponents.createPeopleStatsCard(data.data.people);
+        if (peopleStatsCard) {
+            dataGrid.appendChild(peopleStatsCard);
+        }
     }
 
     if (data.data.charges) {

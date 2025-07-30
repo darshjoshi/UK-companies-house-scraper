@@ -335,7 +335,7 @@ class ErrorHandler {
 // Enhanced report endpoint - Updated to support maxPages parameter
 app.post('/api/enhanced-report', async (req, res) => {
   const startTime = Date.now();
-  const { company, maxPages } = req.body;
+  const { company, maxPages, maxPeoplePages } = req.body;
   
   // Validate maxPages parameter
   const maxPagesValidation = Validator.validateMaxPages(maxPages);
@@ -346,7 +346,19 @@ app.post('/api/enhanced-report', async (req, res) => {
     // Continue with validated value, but log the warning
   }
   
-  Logger.info(`Enhanced report request received`, { company, maxPages: validatedMaxPages });
+  // Validate maxPeoplePages parameter
+  const maxPeoplePagesValidation = Validator.validateMaxPages(maxPeoplePages || 5);
+  const validatedMaxPeoplePages = maxPeoplePagesValidation.value;
+  
+  if (!maxPeoplePagesValidation.valid) {
+    Logger.warn(`Max people pages validation failed: ${maxPeoplePagesValidation.error}`);
+  }
+  
+  Logger.info(`Enhanced report request received`, { 
+    company, 
+    maxPages: validatedMaxPages, 
+    maxPeoplePages: validatedMaxPeoplePages 
+  });
   
   // Validate input
   const validation = Validator.validateCompanyName(company);
@@ -361,10 +373,10 @@ app.post('/api/enhanced-report', async (req, res) => {
   }
 
   try {
-    Logger.info(`Starting enhanced company scraping for: ${company} (max pages: ${validatedMaxPages})`);
+    Logger.info(`Starting enhanced company scraping for: ${company} (max pages: ${validatedMaxPages}, max people pages: ${validatedMaxPeoplePages})`);
     
     // Run the enhanced scraper with better PDF extraction and multi-page support
-    const rawData = await runEnhancedCompaniesScraper(company.trim(), validatedMaxPages);
+    const rawData = await runEnhancedCompaniesScraper(company.trim(), validatedMaxPages, validatedMaxPeoplePages);
     
     // Assess data quality
     const qualityAssessment = QualityAssessor.assessDataQuality(rawData);

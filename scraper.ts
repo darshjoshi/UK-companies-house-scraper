@@ -18,6 +18,32 @@ interface DocumentLink {
   pageCount?: string;
 }
 
+interface PersonLink {
+  linkText: string;
+  url: string;
+  linkType: 'profile' | 'appointment' | 'other';
+}
+
+interface OfficerData {
+  name: string;
+  role: string;
+  appointmentDate?: string;
+  resignationDate?: string;
+  nationality?: string;
+  occupation?: string;
+  address?: string;
+  dateOfBirth?: string;
+  links: PersonLink[];
+}
+
+interface PeopleData {
+  officers: OfficerData[];
+  totalOfficers: number;
+  pagesScraped: number;
+  activeOfficers: number;
+  resignedOfficers: number;
+}
+
 interface ScrapingResult {
   query: string;
   extractionTimestamp: string;
@@ -517,6 +543,280 @@ class PDFExtractor {
   }
 }
 
+// Enhanced People extraction class with multi-page support and URL extraction
+class PeopleExtractor {
+  private page: any;
+
+  constructor(page: any) {
+    this.page = page;
+  }
+
+  async debugPeoplePageContent(): Promise<void> {
+    console.log("=== DEBUG: PEOPLE PAGE CONTENT ANALYSIS ===");
+    
+    const analysis = await this.page.evaluate(() => {
+      const tables = document.querySelectorAll('table');
+      const results: any = {
+        url: window.location.href,
+        title: document.title,
+        tableCount: tables.length,
+        peopleElements: []
+      };
+
+      // Look for officer/people tables
+      tables.forEach((table: any, index: number) => {
+        const tableInfo: any = {
+          index,
+          id: table.id,
+          classes: table.className,
+          rowCount: table.querySelectorAll('tr').length,
+          sampleRows: []
+        };
+
+        // Analyze first few rows for structure
+        const rows = Array.from(table.querySelectorAll('tr')).slice(0, 3);
+        rows.forEach((row: any, rowIndex: number) => {
+          const cells = row.querySelectorAll('td, th');
+          const rowInfo: any = {
+            index: rowIndex,
+            cellCount: cells.length,
+            cells: []
+          };
+
+          cells.forEach((cell: any, cellIndex: number) => {
+            const links = cell.querySelectorAll('a');
+            rowInfo.cells.push({
+              index: cellIndex,
+              text: cell.textContent?.trim().substring(0, 100),
+              linkCount: links.length,
+              links: Array.from(links).map((link: any) => ({
+                text: link.textContent?.trim(),
+                href: link.getAttribute('href'),
+                classes: link.getAttribute('class')
+              }))
+            });
+          });
+
+          tableInfo.sampleRows.push(rowInfo);
+        });
+
+        results.peopleElements.push(tableInfo);
+      });
+
+      return results;
+    });
+
+    console.log("People page analysis:", JSON.stringify(analysis, null, 2));
+  }
+
+  async extractWithDirectDOM(): Promise<OfficerData[]> {
+    console.log("Extracting people data using direct DOM manipulation...");
+    
+    await this.debugPeoplePageContent();
+
+    return await this.page.evaluate(() => {
+      const results: any[] = [];
+      
+      // Look for officer tables - Companies House uses various table structures
+      const possibleTables = [
+        document.getElementById('officers-table'),
+        document.querySelector('table[data-test="officers-table"]'),
+        document.querySelector('.officers-table'),
+        ...Array.from(document.querySelectorAll('table')).filter(table => 
+          table.textContent?.toLowerCase().includes('officer') ||
+          table.textContent?.toLowerCase().includes('director') ||
+          table.textContent?.toLowerCase().includes('secretary')
+        )
+      ].filter(Boolean);
+
+      for (const table of possibleTables) {
+        if (!table) continue;
+        
+        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // Skip header
+        
+        for (const row of rows) {
+          const cells = row.querySelectorAll('td');
+          if (cells.length < 2) continue;
+          
+          let name = '';
+          let role = '';
+          let appointmentDate = '';
+          let resignationDate = '';
+          let address = '';
+          const links: any[] = [];
+          
+          // Extract text content from cells
+          cells.forEach((cell: any, index: number) => {
+            const text = cell.textContent?.trim() || '';
+            
+            // Extract links from this cell
+            const cellLinks = cell.querySelectorAll('a');
+            cellLinks.forEach((link: any) => {
+              const href = link.getAttribute('href');
+              const linkText = link.textContent?.trim();
+              
+              if (href && linkText) {
+                let linkType: 'profile' | 'appointment' | 'other' = 'other';
+                
+                if (href.includes('/officers/') || href.includes('/people/')) {
+                  linkType = 'profile';
+                } else if (href.includes('appointment') || href.includes('filing')) {
+                  linkType = 'appointment';
+                }
+                
+                // Convert relative URLs to absolute
+                const fullUrl = href.startsWith('http') ? href : 
+                  href.startsWith('/') ? `https://find-and-update.company-information.service.gov.uk${href}` :
+                  `https://find-and-update.company-information.service.gov.uk/${href}`;
+                
+                links.push({
+                  linkText: linkText,
+                  url: fullUrl,
+                  linkType: linkType
+                });
+              }
+            });
+            
+            // Determine what this cell contains based on content and position
+            if (index === 0 || text.match(/^[A-Z][a-z]+ [A-Z]/)) {
+              name = text;
+            } else if (text.toLowerCase().includes('director') || 
+                      text.toLowerCase().includes('secretary') ||
+                      text.toLowerCase().includes('officer')) {
+              role = text;
+            } else if (text.match(/\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}/)) {
+              if (!appointmentDate) {
+                appointmentDate = text;
+              } else {
+                resignationDate = text;
+              }
+            } else if (text.length > 20 && text.includes(',')) {
+              address = text;
+            }
+          });
+          
+          if (name && role) {
+            results.push({
+              name: name,
+              role: role,
+              appointmentDate: appointmentDate || undefined,
+              resignationDate: resignationDate || undefined,
+              address: address || undefined,
+              links: links
+            });
+          }
+        }
+      }
+      
+      console.log(`DOM extraction found ${results.length} officers with ${results.reduce((sum, officer) => sum + officer.links.length, 0)} links`);
+      return results;
+    });
+  }
+
+  async extractWithLLM(): Promise<OfficerData[]> {
+    console.log("Extracting people data using LLM...");
+
+    try {
+      const result = await this.page.extract({
+        instruction: `Extract all company officers, directors, and secretaries from this Companies House page.
+        For each person, extract:
+        1. Name (full name)
+        2. Role/Position (director, secretary, etc.)
+        3. Appointment date (if available)
+        4. Resignation date (if available)
+        5. Address (if available)
+        6. All clickable links associated with this person
+        
+        IMPORTANT: 
+        - Extract ALL clickable links for each person (profile links, appointment links, etc.)
+        - Convert relative URLs to absolute URLs
+        - Identify link types: 'profile' for person profile pages, 'appointment' for filing/appointment documents, 'other' for everything else
+        - Include link text and full URL`,
+        schema: z.object({
+          officers: z.array(z.object({
+            name: z.string(),
+            role: z.string(),
+            appointmentDate: z.string().optional(),
+            resignationDate: z.string().optional(),
+            nationality: z.string().optional(),
+            occupation: z.string().optional(),
+            address: z.string().optional(),
+            dateOfBirth: z.string().optional(),
+            links: z.array(z.object({
+              linkText: z.string(),
+              url: z.string().url(),
+              linkType: z.enum(['profile', 'appointment', 'other'])
+            }))
+          }))
+        })
+      });
+
+      const processedOfficers = result.officers.map((officer: any) => {
+        // Ensure all URLs are absolute
+        const processedLinks = officer.links.map((link: any) => {
+          let fullUrl = link.url;
+          if (!fullUrl.startsWith('http')) {
+            fullUrl = fullUrl.startsWith('/') ? 
+              `https://find-and-update.company-information.service.gov.uk${fullUrl}` :
+              `https://find-and-update.company-information.service.gov.uk/${fullUrl}`;
+          }
+          
+          return {
+            linkText: link.linkText,
+            url: fullUrl,
+            linkType: link.linkType
+          };
+        }).filter((link: any) => link.url && link.url.length > 10);
+        
+        return {
+          name: officer.name,
+          role: officer.role,
+          appointmentDate: officer.appointmentDate,
+          resignationDate: officer.resignationDate,
+          nationality: officer.nationality,
+          occupation: officer.occupation,
+          address: officer.address,
+          dateOfBirth: officer.dateOfBirth,
+          links: processedLinks
+        };
+      });
+
+      console.log(`LLM extraction found ${processedOfficers.length} officers with ${processedOfficers.reduce((sum: number, officer: any) => sum + officer.links.length, 0)} links`);
+      return processedOfficers;
+    } catch (error) {
+      console.log("LLM people extraction failed:", error.message);
+      return [];
+    }
+  }
+
+  async extractWithMultipleStrategies(): Promise<OfficerData[]> {
+    const strategies = [
+      { name: 'LLM with URL extraction', method: () => this.extractWithLLM() },
+      { name: 'Direct DOM', method: () => this.extractWithDirectDOM() }
+    ];
+
+    for (const strategy of strategies) {
+      try {
+        console.log(`Trying ${strategy.name} people extraction strategy...`);
+        const results = await strategy.method();
+        
+        if (results && results.length > 0) {
+          const officersWithLinks = results.filter(officer => officer.links && officer.links.length > 0);
+          console.log(`${strategy.name} strategy succeeded with ${results.length} officers, ${officersWithLinks.length} have clickable links`);
+          
+          // Return results even if some don't have links, as basic officer info is still valuable
+          return results;
+        }
+      } catch (error) {
+        console.log(`${strategy.name} strategy failed:`, error.message);
+      }
+    }
+
+    console.log("All people extraction strategies failed");
+    return [];
+  }
+}
+
 // Enhanced navigation class
 class Navigator {
   private page: any;
@@ -606,6 +906,7 @@ class CompaniesHouseScraper {
   private page: any;
   private navigator: Navigator;
   private pdfExtractor: PDFExtractor;
+  private peopleExtractor: PeopleExtractor;
 
   constructor() {
     this.stagehand = new Stagehand({
@@ -625,6 +926,7 @@ class CompaniesHouseScraper {
     this.page = this.stagehand.page;
     this.navigator = new Navigator(this.page);
     this.pdfExtractor = new PDFExtractor(this.page);
+    this.peopleExtractor = new PeopleExtractor(this.page);
   }
 
   async searchCompany(companyName: string): Promise<void> {
@@ -916,31 +1218,166 @@ class CompaniesHouseScraper {
     }
   }
 
-  async extractPeople(): Promise<any> {
-    console.log("Extracting people/officers...");
+  // Enhanced people extraction with multi-page support and URL extraction
+  async extractPeople(maxPages: number = 5): Promise<PeopleData | null> {
+    console.log("Extracting people/officers with multi-page support...");
 
     try {
+      // Navigate to People/Officers section
       await this.navigator.navigateToSection("People");
       
-      const people = await this.page.extract({
-        instruction: "Extract all company officers, directors, and secretaries with their roles, appointment dates, and personal details",
-        schema: z.object({
-          officers: z.array(z.object({
-            name: z.string(),
-            role: z.string(),
-            appointmentDate: z.string().optional(),
-            resignationDate: z.string().optional(),
-            nationality: z.string().optional(),
-            occupation: z.string().optional()
-          }))
-        })
-      });
+      // Wait for page to fully load
+      await ScraperUtils.waitForPageLoad(this.page);
+      
+      // Check if there are multiple pages of officers
+      const estimatedTotalPages = await this.getPeopleTotalPageCount();
+      console.log(`Estimated total people pages: ${estimatedTotalPages}`);
+      
+      // Initialize array to store officers from all pages
+      let allOfficers: OfficerData[] = [];
+      let pagesScraped = 0;
+      
+      // Limit the number of pages to scan
+      const pagesToScan = Math.min(estimatedTotalPages, maxPages);
+      
+      // Process all pages
+      for (let pageNum = 1; pageNum <= pagesToScan; pageNum++) {
+        console.log(`Processing people page ${pageNum}/${pagesToScan}...`);
+        
+        // Navigate to the specific page (this handles page 1 correctly too)
+        if (pageNum > 1) {
+          await this.navigateToPeoplePage(pageNum);
+        }
+        
+        // Add a small delay to ensure the page loads
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        await ScraperUtils.waitForPageLoad(this.page);
+        
+        // Extract officers from current page
+        const pageOfficers = await this.peopleExtractor.extractWithMultipleStrategies();
+        pagesScraped++;
+        
+        if (pageOfficers && pageOfficers.length > 0) {
+          // Add officers from this page to our collection
+          allOfficers = [...allOfficers, ...pageOfficers];
+          console.log(`Extracted ${pageOfficers.length} officers from page ${pageNum}, total: ${allOfficers.length}`);
+        } else {
+          console.log(`No officers found on page ${pageNum}`);
+          
+          // If we couldn't extract any officers from this page, it might mean we've reached the end
+          const currentPage = await this.getCurrentPeoplePage();
+          if (currentPage !== pageNum) {
+            console.log(`Expected page ${pageNum}, but on page ${currentPage}. Stopping pagination.`);
+            break;
+          }
+        }
+      }
+      
+      if (allOfficers.length === 0) {
+        console.log("No officers found across any pages");
+        return null;
+      }
 
-      console.log("People extracted successfully");
-      return people;
+      // Calculate statistics
+      const activeOfficers = allOfficers.filter(officer => !officer.resignationDate).length;
+      const resignedOfficers = allOfficers.filter(officer => officer.resignationDate).length;
+      
+      const peopleData: PeopleData = {
+        officers: allOfficers,
+        totalOfficers: allOfficers.length,
+        pagesScraped: pagesScraped,
+        activeOfficers: activeOfficers,
+        resignedOfficers: resignedOfficers
+      };
+
+      console.log(`Successfully extracted ${allOfficers.length} officers with ${allOfficers.reduce((sum, officer) => sum + officer.links.length, 0)} clickable links across ${pagesScraped} pages`);
+      console.log(`Active officers: ${activeOfficers}, Resigned officers: ${resignedOfficers}`);
+
+      return peopleData;
     } catch (error) {
       console.error("People extraction failed:", error.message);
       return null;
+    }
+  }
+
+  // Helper methods for people pagination
+  private async getPeopleTotalPageCount(): Promise<number> {
+    try {
+      const pageCount = await this.page.evaluate(() => {
+        // Look for pagination links specific to people section
+        const pageLinks = Array.from(document.querySelectorAll('.govuk-pagination__item a[data-page]'));
+        if (pageLinks.length === 0) return 1;
+        
+        let maxPage = 1;
+        pageLinks.forEach(link => {
+          const pageNum = parseInt((link as HTMLElement).getAttribute('data-page') || '1');
+          if (pageNum > maxPage) maxPage = pageNum;
+        });
+        
+        return maxPage;
+      });
+      
+      return pageCount || 1;
+    } catch (error) {
+      console.warn("Error determining people page count:", error.message);
+      return 1;
+    }
+  }
+
+  private async getCurrentPeoplePage(): Promise<number> {
+    try {
+      const currentPage = await this.page.evaluate(() => {
+        // Look for current page in URL
+        const pageMatch = window.location.href.match(/[?&]page=(\d+)/);
+        if (pageMatch) return parseInt(pageMatch[1]);
+        
+        // Look for active pagination item
+        const activePage = document.querySelector('.govuk-pagination__item--current a[data-page]');
+        if (activePage) return parseInt(activePage.getAttribute('data-page') || '1');
+        
+        return 1;
+      });
+      
+      return currentPage || 1;
+    } catch (error) {
+      console.warn("Error determining current people page:", error.message);
+      return 1;
+    }
+  }
+
+  private async navigateToPeoplePage(pageNumber: number): Promise<void> {
+    try {
+      // First, check if we're already on that page
+      const currentPage = await this.getCurrentPeoplePage();
+      if (currentPage === pageNumber) {
+        console.log(`Already on people page ${pageNumber}`);
+        return;
+      }
+      
+      // Try to click the page number directly
+      const clickedPage = await this.page.evaluate((pageNum) => {
+        const pageLink = document.querySelector(`a#pageNo${pageNum}[data-page="${pageNum}"]`);
+        if (pageLink) {
+          (pageLink as HTMLElement).click();
+          return true;
+        }
+        return false;
+      }, pageNumber);
+      
+      if (clickedPage) {
+        console.log(`Clicked on people page ${pageNumber} link`);
+        await ScraperUtils.waitForPageLoad(this.page);
+        return;
+      }
+      
+      // Fallback to URL-based navigation
+      const currentUrl = this.page.url();
+      const baseUrl = currentUrl.split('?')[0];
+      await this.page.goto(`${baseUrl}?page=${pageNumber}`);
+      console.log(`Navigated to people page ${pageNumber} via URL`);
+      await ScraperUtils.waitForPageLoad(this.page);
+    } catch (error) {
+      throw new Error(`Failed to navigate to people page ${pageNumber}: ${error.message}`);
     }
   }
 
@@ -1065,8 +1502,8 @@ class CompaniesHouseScraper {
     return Math.max(0, Math.min(100, score));
   }
 
-  // Updated to accept maxFilingPages parameter
-  async scrapeCompany(companyName: string, maxFilingPages: number = 10): Promise<ScrapingResult> {
+  // Updated to accept maxFilingPages and maxPeoplePages parameters
+  async scrapeCompany(companyName: string, maxFilingPages: number = 10, maxPeoplePages: number = 5): Promise<ScrapingResult> {
     const startTime = Date.now();
     
     const result: ScrapingResult = {
@@ -1083,7 +1520,7 @@ class CompaniesHouseScraper {
       // Extract all sections
       result.overview = await this.extractOverview();
       result.filing = await this.extractFilingHistory(maxFilingPages);
-      result.people = await this.extractPeople();
+      result.people = await this.extractPeople(maxPeoplePages);
       result.charges = await this.extractCharges();
 
       // Calculate quality score
@@ -1111,16 +1548,17 @@ class CompaniesHouseScraper {
   }
 }
 
-// Updated export function to accept maxFilingPages parameter
+// Updated export function to accept maxFilingPages and maxPeoplePages parameters
 export async function runEnhancedCompaniesScraper(
   companyName: string,
-  maxFilingPages: number = 10
+  maxFilingPages: number = 10,
+  maxPeoplePages: number = 5
 ): Promise<ScrapingResult> {
   const scraper = new CompaniesHouseScraper();
   
   try {
     await scraper.initialize();
-    return await scraper.scrapeCompany(companyName, maxFilingPages);
+    return await scraper.scrapeCompany(companyName, maxFilingPages, maxPeoplePages);
   } finally {
     await scraper.close();
   }
