@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { runEnhancedCompaniesScraper } from './scraper.js';
+import { runEnhancedCompaniesScraper, testPDFExtraction } from './scraper.js';
 import { getEnhancedAnthropicSummary } from './summarizer.js';
 
 const app = express();
@@ -72,6 +72,28 @@ class Validator {
     
     return { valid: true };
   }
+
+  static validateMaxPages(maxPages: any): { valid: boolean; value: number; error?: string } {
+    if (maxPages === undefined || maxPages === null) {
+      return { valid: true, value: 10 }; // Default value
+    }
+    
+    const parsedValue = parseInt(maxPages);
+    
+    if (isNaN(parsedValue)) {
+      return { valid: false, value: 10, error: 'Max pages must be a number' };
+    }
+    
+    if (parsedValue < 1) {
+      return { valid: false, value: 1, error: 'Max pages must be at least 1' };
+    }
+    
+    if (parsedValue > 50) {
+      return { valid: false, value: 50, error: 'Max pages cannot exceed 50 for performance reasons' };
+    }
+    
+    return { valid: true, value: parsedValue };
+  }
 }
 
 // Data quality assessment
@@ -105,7 +127,7 @@ class QualityAssessor {
       }
     }
 
-    // Filing history assessment (40 points)
+    // Filing history assessment (40 points) - enhanced for PDF extraction
     if (!data.filing || !data.filing.filings || data.filing.filings.length === 0) {
       issues.push("No filing history extracted");
       score -= 40;
@@ -121,17 +143,30 @@ class QualityAssessor {
         score += 5; // Bonus for extensive history
       }
 
-      // Check PDF document extraction
-      const docSuccessRate = filingData.statistics?.documentSuccessRate || 0;
+      // Enhanced PDF document extraction assessment
+      const docSuccessRate = filingData.statistics?.documentSuccessRate ?? 0;
       if (docSuccessRate === 0) {
         issues.push("No PDF document links extracted");
         score -= 20;
-        recommendations.push("PDF documents may not be available or extraction failed");
+        recommendations.push("PDF extraction may have failed - check network connectivity to Companies House");
       } else if (docSuccessRate < 30) {
         issues.push(`Low PDF extraction rate: ${docSuccessRate}%`);
         score -= 10;
+        recommendations.push("Try using enhanced extraction strategies or verify document availability");
       } else if (docSuccessRate > 80) {
         score += 5; // Bonus for high success rate
+      }
+
+      // Check PDF links validity
+      const invalidPDFLinks = filingData.filings.filter(f => 
+        f.documentLinks && f.documentLinks.length > 0 && 
+        f.documentLinks.some(link => !link.url || !link.url.includes('document?format='))
+      ).length;
+      
+      if (invalidPDFLinks > 0) {
+        issues.push(`${invalidPDFLinks} filings have potentially invalid PDF links`);
+        score -= 5;
+        recommendations.push("PDF link format may be incorrect, verify URL structure");
       }
 
       // Check for recent filings
@@ -145,6 +180,14 @@ class QualityAssessor {
           score -= 5;
           recommendations.push("Check if company is still active");
         }
+      }
+      
+      // Add bonus for multiple pages scraped
+      if (filingData.pagesScraped > 1) {
+        const multiPageBonus = Math.min(5, filingData.pagesScraped);
+        score += multiPageBonus;
+        // Make sure score doesn't exceed 100
+        score = Math.min(100, score);
       }
     }
 
@@ -222,13 +265,14 @@ class StatsCalculator {
       filingsWithPDFs: stats.filingsWithDocuments || 0,
       totalPDFPages: stats.totalDocumentPages || 0,
       pdfSuccessRate: stats.documentSuccessRate || 0,
+      pagesScraped: data.filing.pagesScraped || 1,
       dateRange: data.filing.dateRange,
       filingTypes: stats.filingTypes || {},
       recentFilings: filings.slice(0, 5).map(f => ({
         date: f.date,
         type: f.type,
         description: f.description.substring(0, 100) + (f.description.length > 100 ? '...' : ''),
-        hasDocuments: (f.documentLinks || []).length > 0
+        hasDocuments: (f.documentLinks?.length ?? 0) > 0
       }))
     };
   }
@@ -241,6 +285,7 @@ class StatsCalculator {
       hasCharges: !!(data.charges && data.charges.charges && data.charges.charges.length > 0),
       officerCount: data.people?.officers?.length || 0,
       chargeCount: data.charges?.charges?.length || 0,
+      pagesScraped: data.filing?.pagesScraped || 1,
       extractionTimestamp: data.extractionTimestamp || new Date().toISOString()
     };
   }
@@ -271,6 +316,14 @@ class ErrorHandler {
       statusCode = 502;
       errorCode = 'EXTRACTION_ERROR';
       userMessage = 'Data extraction failed. The website may be temporarily unavailable.';
+    } else if (errorMessage.includes('pdf') || errorMessage.includes('document links')) {
+      statusCode = 500;
+      errorCode = 'PDF_EXTRACTION_ERROR';
+      userMessage = 'Failed to extract PDF links. Try using a different extraction strategy.';
+    } else if (errorMessage.includes('pagination') || errorMessage.includes('next page')) {
+      statusCode = 500;
+      errorCode = 'PAGINATION_ERROR';
+      userMessage = 'Failed to navigate through filing pages. Try with fewer pages.';
     }
 
     return { statusCode, errorCode, userMessage };
@@ -279,12 +332,33 @@ class ErrorHandler {
 
 // Main API endpoints
 
-// Enhanced report endpoint
+// Enhanced report endpoint - Updated to support maxPages parameter
 app.post('/api/enhanced-report', async (req, res) => {
   const startTime = Date.now();
-  const { company } = req.body;
+  const { company, maxPages, maxPeoplePages } = req.body;
   
-  Logger.info(`Enhanced report request received`, { company });
+  // Validate maxPages parameter
+  const maxPagesValidation = Validator.validateMaxPages(maxPages);
+  const validatedMaxPages = maxPagesValidation.value;
+  
+  if (!maxPagesValidation.valid) {
+    Logger.warn(`Max pages validation failed: ${maxPagesValidation.error}`);
+    // Continue with validated value, but log the warning
+  }
+  
+  // Validate maxPeoplePages parameter
+  const maxPeoplePagesValidation = Validator.validateMaxPages(maxPeoplePages || 5);
+  const validatedMaxPeoplePages = maxPeoplePagesValidation.value;
+  
+  if (!maxPeoplePagesValidation.valid) {
+    Logger.warn(`Max people pages validation failed: ${maxPeoplePagesValidation.error}`);
+  }
+  
+  Logger.info(`Enhanced report request received`, { 
+    company, 
+    maxPages: validatedMaxPages, 
+    maxPeoplePages: validatedMaxPeoplePages 
+  });
   
   // Validate input
   const validation = Validator.validateCompanyName(company);
@@ -299,10 +373,10 @@ app.post('/api/enhanced-report', async (req, res) => {
   }
 
   try {
-    Logger.info(`Starting enhanced company scraping for: ${company}`);
+    Logger.info(`Starting enhanced company scraping for: ${company} (max pages: ${validatedMaxPages}, max people pages: ${validatedMaxPeoplePages})`);
     
-    // Run the enhanced scraper
-    const rawData = await runEnhancedCompaniesScraper(company.trim());
+    // Run the enhanced scraper with better PDF extraction and multi-page support
+    const rawData = await runEnhancedCompaniesScraper(company.trim(), validatedMaxPages, validatedMaxPeoplePages);
     
     // Assess data quality
     const qualityAssessment = QualityAssessor.assessDataQuality(rawData);
@@ -310,20 +384,22 @@ app.post('/api/enhanced-report', async (req, res) => {
     
     Logger.info(`Data extraction completed`, {
       qualityScore: qualityAssessment.score,
-      issueCount: qualityAssessment.issues.length
+      issueCount: qualityAssessment.issues.length,
+      pagesScraped: rawData.filing?.pagesScraped || 1
     });
 
     // Calculate statistics
     const filingStats = StatsCalculator.calculateFilingStats(rawData);
     const overallStats = StatsCalculator.calculateOverallStats(rawData);
 
-    // Log detailed statistics
+    // Log detailed statistics for PDF extraction
     if (filingStats) {
-      Logger.info(`Filing extraction statistics`, {
+      Logger.info(`PDF extraction statistics`, {
         totalFilings: filingStats.totalFilings,
         filingsWithPDFs: filingStats.filingsWithPDFs,
         pdfSuccessRate: `${filingStats.pdfSuccessRate}%`,
-        totalPDFPages: filingStats.totalPDFPages
+        totalPDFPages: filingStats.totalPDFPages,
+        pagesScraped: filingStats.pagesScraped
       });
     }
 
@@ -346,7 +422,8 @@ app.post('/api/enhanced-report', async (req, res) => {
     const processingTime = Date.now() - startTime;
     Logger.info(`Enhanced report completed`, { 
       processingTime: `${processingTime}ms`,
-      qualityScore: qualityAssessment.score
+      qualityScore: qualityAssessment.score,
+      pagesScraped: rawData.filing?.pagesScraped || 1
     });
 
     // Enhanced response
@@ -369,7 +446,10 @@ app.post('/api/enhanced-report', async (req, res) => {
         performance: {
           scrapingTime: processingTime,
           aiSummaryGenerated: qualityAssessment.score >= 40,
-          cacheEnabled: true
+          cacheEnabled: true,
+          pdfExtractionSuccess: (filingStats?.pdfSuccessRate ?? 0) > 0,
+          pagesRequested: validatedMaxPages,
+          pagesScraped: rawData.filing?.pagesScraped || 1
         }
       }
     });
@@ -380,6 +460,7 @@ app.post('/api/enhanced-report', async (req, res) => {
     
     Logger.error(`Enhanced report generation failed`, {
       company,
+      maxPages: validatedMaxPages,
       processingTime: `${processingTime}ms`,
       error: error.message,
       stack: error.stack
@@ -393,6 +474,7 @@ app.post('/api/enhanced-report', async (req, res) => {
       metadata: {
         processingTime: `${processingTime}ms`,
         timestamp: new Date().toISOString(),
+        maxPagesRequested: validatedMaxPages,
         errorDetails: {
           type: errorInfo.errorCode,
           originalError: error.message
@@ -409,6 +491,88 @@ app.post('/api/report', async (req, res) => {
   req.url = '/api/enhanced-report';
   return app._router.handle(req, res);
 });
+
+// PDF Extraction test endpoint
+app.get('/api/test-pdf-extraction/:companyNumber', async (req, res) => {
+  const { companyNumber } = req.params;
+  
+  Logger.info(`PDF extraction test requested for company: ${companyNumber}`);
+  
+  try {
+    const results = await testPDFExtraction(companyNumber);
+    
+    Logger.info(`PDF extraction test completed`, {
+      directDOMCount: results.results.directDOM.pdfLinks,
+      llmCount: results.results.llm.pdfLinks,
+      hybridCount: results.results.hybrid.pdfLinks
+    });
+    
+    res.json({
+      success: true,
+      companyNumber,
+      results: results.results,
+      metadata: {
+        timestamp: new Date().toISOString(),
+        bestStrategy: determineBestStrategy(results.results)
+      }
+    });
+  } catch (error) {
+    Logger.error(`PDF extraction test failed`, {
+      companyNumber,
+      error: error.message
+    });
+    
+    res.status(500).json({
+      success: false,
+      error: `PDF extraction test failed: ${error.message}`,
+      companyNumber,
+      code: 'PDF_TEST_FAILED'
+    });
+  }
+});
+
+// Helper function to determine the best PDF extraction strategy
+function determineBestStrategy(results: any): { name: string; reason: string } {
+  const strategies = [
+    {
+      name: 'directDOM',
+      count: results.directDOM.pdfLinks,
+      filingCount: results.directDOM.filingCount
+    },
+    {
+      name: 'llm',
+      count: results.llm.pdfLinks,
+      filingCount: results.llm.filingCount
+    },
+    {
+      name: 'hybrid',
+      count: results.hybrid.pdfLinks,
+      filingCount: results.hybrid.filingCount
+    }
+  ];
+  
+  // Sort by PDF link count, then by filing count
+  strategies.sort((a, b) => {
+    if (b.count !== a.count) return b.count - a.count;
+    return b.filingCount - a.filingCount;
+  });
+  
+  const best = strategies[0];
+  
+  if (best.count === 0) {
+    return {
+      name: 'none',
+      reason: 'No PDF links were found with any strategy'
+    };
+  }
+  
+  let reason = `Found the most PDF links (${best.count})`;
+  if (best.count === strategies[1].count) {
+    reason = `Found the same number of PDF links (${best.count}) as ${strategies[1].name} but with ${best.filingCount > strategies[1].filingCount ? 'more filings' : 'equal filings'}`;
+  }
+  
+  return { name: best.name, reason };
+}
 
 // Filing export endpoint
 app.get('/api/filings/:companyNumber', async (req, res) => {
@@ -446,55 +610,39 @@ app.get('/api/filings/:companyNumber', async (req, res) => {
   }
 });
 
-// Test endpoint for PDF extraction
-app.get('/api/test-pdf/:companyName', async (req, res) => {
-  const { companyName } = req.params;
+// New endpoint to get page count estimate for a company
+app.get('/api/page-count-estimate/:companyNumber', async (req, res) => {
+  const { companyNumber } = req.params;
   
-  Logger.info(`PDF extraction test request`, { companyName });
-
+  Logger.info(`Page count estimate requested for company: ${companyNumber}`);
+  
   try {
-    const result = await runEnhancedCompaniesScraper(companyName);
+    // This is a placeholder implementation
+    // In a real implementation, you would make a quick request to
+    // the first page of filing history and check pagination
     
-    // Extract key statistics for testing
-    const testResults = {
-      companyFound: !!result.overview,
-      totalFilings: result.filing?.totalFilings || 0,
-      filingsWithPDFs: result.filing?.statistics?.filingsWithDocuments || 0,
-      pdfSuccessRate: result.filing?.statistics?.documentSuccessRate || 0,
-      qualityScore: result.qualityScore || 0,
-      dataIssues: result.dataIssues || [],
-      sampleFilings: (result.filing?.filings || [])
-        .filter(f => f.documentLinks && f.documentLinks.length > 0)
-        .slice(0, 3)
-        .map(f => ({
-          date: f.date,
-          type: f.type,
-          description: f.description.substring(0, 80) + '...',
-          documentCount: f.documentLinks.length,
-          sampleDocument: f.documentLinks[0] ? {
-            type: f.documentLinks[0].linkType,
-            text: f.documentLinks[0].linkText,
-            hasValidUrl: f.documentLinks[0].url && f.documentLinks[0].url.length > 10,
-            pageCount: f.documentLinks[0].pageCount
-          } : null
-        }))
-    };
-    
+    // For now, return a dummy response
     res.json({
       success: true,
-      company: companyName,
-      testResults,
-      timestamp: new Date().toISOString(),
-      message: "PDF extraction test completed successfully"
+      companyNumber,
+      estimatedPageCount: 5,
+      note: "This is an estimated page count. The actual number may vary.",
+      metadata: {
+        timestamp: new Date().toISOString(),
+        estimationMethod: "placeholder"
+      }
+    });
+  } catch (error) {
+    Logger.error(`Page count estimation failed`, {
+      companyNumber,
+      error: error.message
     });
     
-  } catch (error) {
-    Logger.error('PDF test failed', { error: error.message });
     res.status(500).json({
       success: false,
-      error: error.message,
-      company: companyName,
-      code: 'TEST_FAILED'
+      error: `Failed to estimate page count: ${error.message}`,
+      companyNumber,
+      code: 'ESTIMATION_ERROR'
     });
   }
 });
@@ -509,6 +657,7 @@ app.get('/api/health', (req, res) => {
     features: [
       'enhanced_pdf_extraction',
       'multi_strategy_scraping', 
+      'multi_page_extraction',
       'quality_assessment',
       'ai_powered_analysis',
       'comprehensive_error_handling',
@@ -534,6 +683,7 @@ app.get('/api/info', (req, res) => {
     features: {
       dataExtraction: [
         'Multi-strategy PDF link extraction',
+        'Multi-page filing history extraction',
         'Comprehensive filing history with document links',
         'Officer and people information',
         'Charges and security interests',
@@ -556,16 +706,23 @@ app.get('/api/info', (req, res) => {
     endpoints: {
       'POST /api/enhanced-report': {
         description: 'Generate comprehensive company report with enhanced PDF extraction',
-        body: { company: 'string (company name)' },
+        body: { 
+          company: 'string (company name)',
+          maxPages: 'number (optional, default: 10, max: 50)'
+        },
         response: 'Complete company analysis with AI summary'
       },
       'POST /api/report': {
         description: 'Legacy endpoint (redirects to enhanced-report)',
         deprecated: true
       },
-      'GET /api/test-pdf/:companyName': {
+      'GET /api/test-pdf-extraction/:companyNumber': {
         description: 'Test PDF extraction capabilities for a specific company',
         response: 'PDF extraction test results and statistics'
+      },
+      'GET /api/page-count-estimate/:companyNumber': {
+        description: 'Get an estimate of the number of filing history pages for a company',
+        response: 'Estimated page count'
       },
       'GET /api/filings/:companyNumber': {
         description: 'Export filing data in various formats',
@@ -583,8 +740,9 @@ app.get('/api/info', (req, res) => {
     qualityFeatures: {
       extractionStrategies: [
         'Direct DOM manipulation with enhanced selectors',
-        'LLM-powered extraction with post-processing',
-        'Fallback text pattern matching'
+        'LLM-powered extraction with URL type',
+        'Hybrid approach combining DOM and LLM',
+        'Multi-page navigation and extraction'
       ],
       qualityAssurance: [
         'Automated quality scoring (0-100)',
@@ -598,7 +756,10 @@ app.get('/api/info', (req, res) => {
       basicRequest: {
         method: 'POST',
         url: '/api/enhanced-report',
-        body: { company: 'COMPANY NAME LTD' }
+        body: { 
+          company: 'COMPANY NAME LTD',
+          maxPages: 10
+        }
       },
       rateLimit: 'Intelligent rate limiting to prevent blocking',
       timeout: '60 seconds maximum per request',
@@ -643,6 +804,7 @@ app.listen(PORT, () => {
   
   Logger.info('New features in v3.0.0:', [
     'Multi-strategy PDF extraction',
+    'Multi-page filing history extraction',
     'Enhanced quality assessment',
     'Comprehensive error handling',
     'Performance monitoring',
