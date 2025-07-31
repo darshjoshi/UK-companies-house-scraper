@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced UK Company Intelligence v3.0</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pdf-extraction.css">
+    <link rel="stylesheet" href="/css/people-display.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Enhanced UK Company Intelligence</h1>
+            <div class="version-badge">Version 3.0.0</div>
+            <p class="subtitle">
+                Multi-strategy PDF link extraction with AI-powered business intelligence
+            </p>
+            <div class="features-list">
+                <span class="feature-tag">🎯 Multi-Strategy Extraction</span>
+                <span class="feature-tag">📄 Real PDF Links</span>
+                <span class="feature-tag">🤖 AI Analysis</span>
+                <span class="feature-tag">📊 Quality Assessment</span>
+                <span class="feature-tag">⚡ Performance Optimized</span>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <form id="searchForm" class="search-form">
+                <input 
+                    type="text" 
+                    id="companyInput" 
+                    class="search-input" 
+                    placeholder="Enter company name (e.g., 'EUROMOTORS LIMITED', 'DARSH LTD')" 
+                    required
+                />
+                <button type="submit" id="searchButton" class="search-button">
+                    Extract Complete Intelligence
+                </button>
+            </form>
+        </div>
+
+        <div id="loadingSection" class="loading">
+            <div class="loading-spinner"></div>
+            <h3>🔍 Extracting comprehensive company intelligence...</h3>
+            <div class="loading-progress">
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
+            </div>
+            <p class="loading-text">
+                Processing <span id="currentPage">page 1</span>...
+            </p>
+            <p class="loading-subtext" id="loadingSubtext">
+                Using multi-strategy extraction with DOM manipulation, LLM processing, and quality assessment
+            </p>
+        </div>
+
+        <div id="resultsContainer" class="results-container">
+            <div id="qualityBanner"></div>
+            <div id="pdf-diagnostics"></div>
+            <div id="statsSection"></div>
+            <div class="data-grid" id="dataGrid"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>Enhanced UK Company Intelligence API v3.0.0</p>
+            <p>Powered by AI-driven PDF extraction and business analysis</p>
+        </div>
+    </footer>
+
+    <script src="/js/netlify-config.js"></script>
+    <script src="/js/ui-components.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/ui-components.js"></script>
+</body>
+</html>

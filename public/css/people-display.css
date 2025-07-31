@@ -1,0 +1,374 @@
+/* Enhanced People Display Styles */
+
+/* Extraction Controls */
+.extraction-controls {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.max-pages-control,
+.max-people-pages-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.max-pages-control label,
+.max-people-pages-control label {
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.max-pages-select {
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.tooltip-icon {
+    color: #6c757d;
+    cursor: help;
+    font-size: 16px;
+    position: relative;
+}
+
+.tooltip-icon:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* People Summary Statistics */
+.people-summary {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    color: white;
+}
+
+.people-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Officers List */
+.officers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.officer-item {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.officer-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.officer-item.officer-active {
+    border-left: 4px solid #28a745;
+}
+
+.officer-item.officer-resigned {
+    border-left: 4px solid #dc3545;
+    background: #fafafa;
+}
+
+.officer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.officer-name-role {
+    flex: 1;
+}
+
+.officer-name {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.officer-role {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 8px;
+}
+
+.officer-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.officer-status.status-officer-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.officer-status.status-officer-resigned {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.officer-number {
+    background: #6c757d;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Officer Details */
+.officer-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.detail-item {
+    font-size: 14px;
+    color: #495057;
+}
+
+.detail-item strong {
+    color: #2c3e50;
+    margin-right: 5px;
+}
+
+/* Officer Links */
+.officer-links {
+    border-top: 1px solid #e9ecef;
+    padding-top: 15px;
+}
+
+.officer-links strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.links-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Clickable Links */
+.clickable-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: #007bff;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.clickable-link:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+    text-decoration: none;
+    color: white !important;
+}
+
+.clickable-link:active {
+    transform: translateY(0);
+}
+
+/* Link Type Specific Styles */
+.link-type-profile {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+.link-type-profile:hover {
+    background: #1e7e34;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+}
+
+.link-type-appointment {
+    background: #ffc107;
+    color: #212529 !important;
+    border-color: #ffc107;
+}
+
+.link-type-appointment:hover {
+    background: #e0a800;
+    color: #212529 !important;
+    box-shadow: 0 2px 8px rgba(255,193,7,0.3);
+}
+
+.link-type-other {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+.link-type-other:hover {
+    background: #545b62;
+    box-shadow: 0 2px 8px rgba(108,117,125,0.3);
+}
+
+.external-link-indicator {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.no-links {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* People Statistics Card */
+.people-stats-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #2c3e50;
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .extraction-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .people-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .officer-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .links-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .clickable-link {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .people-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .officer-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .officer-number {
+        align-self: flex-start;
+    }
+}
