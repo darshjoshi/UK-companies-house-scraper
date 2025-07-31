@@ -2236,5 +2236,1443 @@
     },
     "timestamp": 1753919387805,
     "requestId": "shmp50nrb1n"
+  },
+  "41915ff8c073c58b41594e313d54a559ca00b08182cb13d8c8b688734a2f0c78": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-525",
+            "description": "Link to the first company result 'DARSH LTD'",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5087,
+        "completion_tokens": 162,
+        "total_tokens": 5249
+      }
+    },
+    "timestamp": 1753920135992,
+    "requestId": "ci77h3vgzq"
+  },
+  "1c27490157e770a8dd156872063ee32ceceb130dd0f172f1cc7e1bc983223e92": {
+    "data": {
+      "data": {
+        "companyName": "DARSH LTD",
+        "companyNumber": "13914683",
+        "status": "Active",
+        "incorporationDate": "14 February 2022",
+        "companyType": "Private limited Company",
+        "registeredAddress": "2 Holdiford Road, Stafford, Staffordshire, United Kingdom, ST17 0UX"
+      },
+      "usage": {
+        "prompt_tokens": 2727,
+        "completion_tokens": 214,
+        "total_tokens": 2941
+      }
+    },
+    "timestamp": 1753920145942,
+    "requestId": "a4dkqc3rypg"
+  },
+  "121c5c0b043afc2eaa9197cc5031440b43dde3ff289ecb97aa74fab9c40db13d": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-1051",
+            "description": "Link containing 'Filing history for DARSH LTD (13914683)'",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3129,
+        "completion_tokens": 202,
+        "total_tokens": 3331
+      }
+    },
+    "timestamp": 1753920151762,
+    "requestId": "mejt8cq12xa"
+  },
+  "4c9dbf2287a9229caf07a8fdb7952ac5ee9a68989c94ad68ade181568ac472a6": {
+    "data": {
+      "data": {
+        "officers": [
+          {
+            "name": "HARLEY, Thomas David",
+            "role": "Director",
+            "appointmentDate": "14 February 2022",
+            "dateOfBirth": "July 1980",
+            "address": "2 Holdiford Road, Stafford, Staffordshire, United Kingdom, ST17 0UX",
+            "nationality": "British",
+            "occupation": "Director",
+            "links": [
+              {
+                "linkText": "HARLEY, Thomas David",
+                "url": "0-2026",
+                "linkType": "profile"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3008,
+        "completion_tokens": 239,
+        "total_tokens": 3247
+      }
+    },
+    "timestamp": 1753920177051,
+    "requestId": "hvdouygngnv"
+  },
+  "fd1b725b0a64e42fe7d2024111cfc5bedee86d5af9dbcd700161bbdd2486bfe2": {
+    "data": {
+      "data": {
+        "progress": "Extracted 1 officer with complete information including name, role, appointment date, address, and associated links. All required fields captured.",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 928,
+        "completion_tokens": 311,
+        "total_tokens": 1239
+      }
+    },
+    "timestamp": 1753920184530,
+    "requestId": "hvdouygngnv"
+  },
+  "30fe8bc73650e38bf6ee4b9b3c2edacd20b1846501ff7c30a003f996eb5e0b65": {
+    "data": {
+      "data": {
+        "elements": []
+      },
+      "usage": {
+        "prompt_tokens": 3073,
+        "completion_tokens": 112,
+        "total_tokens": 3185
+      }
+    },
+    "timestamp": 1753920188920,
+    "requestId": "9spcgiigcjp"
+  },
+  "21ef4df2fb8ef2abfe7ce555c19497a05256c9925e88bb5b07edc220c65601e4": {
+    "data": {
+      "data": {
+        "charges": [
+          {
+            "description": "0 charges registered (0 outstanding, 0 satisfied, 0 part satisfied)",
+            "status": "No charges"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2135,
+        "completion_tokens": 152,
+        "total_tokens": 2287
+      }
+    },
+    "timestamp": 1753920197623,
+    "requestId": "7bmw7kbif3e"
+  },
+  "b03a7b3458e5ab66d6711dba15e29da33349bc479cba83df78ad9f5aae2422b5": {
+    "data": {
+      "data": {
+        "progress": "No charges, mortgages, or security interests found against the company (0 charges registered)",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 659,
+        "completion_tokens": 260,
+        "total_tokens": 919
+      }
+    },
+    "timestamp": 1753920203859,
+    "requestId": "7bmw7kbif3e"
+  },
+  "540b4b4e0769b3043895af9068e7e3baa7711b71385dc5619e19aac8068de705": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-84",
+            "description": "Button to accept analytics cookies in the cookie banner",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2806,
+        "completion_tokens": 181,
+        "total_tokens": 2987
+      }
+    },
+    "timestamp": 1753920313311,
+    "requestId": "zu5csm2fs7o"
+  },
+  "0f63f782e10ef8f5bdb03a65750b68d30b2223c8f621ef1c560a4722015f08e1": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-4",
+            "description": "searchbox for entering company name, number or officer name",
+            "method": "fill",
+            "arguments": [
+              "Spotify"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2728,
+        "completion_tokens": 187,
+        "total_tokens": 2915
+      }
+    },
+    "timestamp": 1753920322343,
+    "requestId": "wtf1m54833d"
+  },
+  "80f9fab34fd817d43d7007b327f1ed792f93730db9a1f0482a0e60f1b27e183a": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-5",
+            "description": "Search button in the main search area",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2733,
+        "completion_tokens": 182,
+        "total_tokens": 2915
+      }
+    },
+    "timestamp": 1753920327784,
+    "requestId": "3d2pa60r0c"
+  },
+  "8dfc8f0ea79e7498534d239e02059155a8adb53707e2100731611cba9c961b64": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-526",
+            "description": "Link to SPOTIFY LIMITED - first company result",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2971,
+        "completion_tokens": 169,
+        "total_tokens": 3140
+      }
+    },
+    "timestamp": 1753920336512,
+    "requestId": "tacrujikcm"
+  },
+  "c1ca4eea77d50347f43c34b87ef00d65aabf0a0ab56827bb04db2dea0c50c2d0": {
+    "data": {
+      "data": {
+        "companyName": "SPOTIFY LIMITED",
+        "companyNumber": "06436047",
+        "status": "Active",
+        "incorporationDate": "23 November 2007",
+        "companyType": "Private limited Company",
+        "registeredAddress": "The Adelphi, 1-11 John Adam Street, London, WC2N 6HT"
+      },
+      "usage": {
+        "prompt_tokens": 2720,
+        "completion_tokens": 210,
+        "total_tokens": 2930
+      }
+    },
+    "timestamp": 1753920345568,
+    "requestId": "4o9vai91ea6"
+  },
+  "90f9b59351e34fe9d29e407d0614140d246f1a1a5feb7fd7528681b0b3ecb53e": {
+    "data": {
+      "data": {
+        "progress": "Company details extracted: SPOTIFY LIMITED (06436047), Active status, incorporated 23 November 2007, Private limited Company, registered at The Adelphi, 1-11 John Adam Street, London, WC2N 6HT",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 707,
+        "completion_tokens": 324,
+        "total_tokens": 1031
+      }
+    },
+    "timestamp": 1753920351046,
+    "requestId": "4o9vai91ea6"
+  },
+  "00f9f483a5322a3ae5928d1087fe64e1c197f65cb3a7f0dfb026c199b0ec68ca": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-867",
+            "description": "Link to filing history for SPOTIFY LIMITED",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3122,
+        "completion_tokens": 188,
+        "total_tokens": 3310
+      }
+    },
+    "timestamp": 1753920356408,
+    "requestId": "uaac102hbyl"
+  },
+  "c7a5f9d0051dc26d40086ba3d1fa225efc62defc3f4903949b5d6eb98309c17e": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-1324",
+            "description": "Link containing 'People' that leads to people information for SPOTIFY LIMITED",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 7993,
+        "completion_tokens": 164,
+        "total_tokens": 8157
+      }
+    },
+    "timestamp": 1753920383697,
+    "requestId": "0fsc2cemtv1s"
+  },
+  "54f3763b1deddd2a99e95683a1af14f16dd36eab2c94519aaa6cdaec70a61e55": {
+    "data": {
+      "data": {
+        "officers": [
+          {
+            "name": "DEYSEL, Sallie Elizabeth",
+            "role": "Director",
+            "appointmentDate": "29 March 2024",
+            "address": "4 World Trade Center, 150 Greenwich St. Floor 62, New York, Ny 10007, United States",
+            "nationality": "British",
+            "occupation": "Business Executive",
+            "links": [
+              {
+                "linkText": "DEYSEL, Sallie Elizabeth",
+                "url": "0-2076",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "GRANDELIUS, Peter",
+            "role": "Director",
+            "appointmentDate": "15 April 2019",
+            "address": "The Adelphi, 1-11 John Adam Street, London, WC2N 6HT",
+            "nationality": "Swedish",
+            "occupation": "Lawyer",
+            "links": [
+              {
+                "linkText": "GRANDELIUS, Peter",
+                "url": "0-2126",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "7SIDE SECRETARIAL LIMITED",
+            "role": "Secretary",
+            "appointmentDate": "23 November 2007",
+            "resignationDate": "19 February 2009",
+            "address": "14-18 City Road, Cardiff, CF24 3DL",
+            "links": [
+              {
+                "linkText": "7SIDE SECRETARIAL LIMITED",
+                "url": "0-2176",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "GOODWILLE LIMITED",
+            "role": "Secretary",
+            "appointmentDate": "19 February 2009",
+            "resignationDate": "11 November 2016",
+            "address": "St James House, 13 Kensington Square, London, W8 5HD",
+            "links": [
+              {
+                "linkText": "GOODWILLE LIMITED",
+                "url": "0-2211",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "CARTHY JR., W Barry Mc",
+            "role": "Director",
+            "appointmentDate": "1 January 2016",
+            "resignationDate": "9 December 2019",
+            "address": "C/O Spotify, Birger Jarlsgatan 61, Stockholm, Sweden, SE-113 56",
+            "nationality": "American",
+            "occupation": "Cfo",
+            "links": [
+              {
+                "linkText": "CARTHY JR., W Barry Mc",
+                "url": "0-2246",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "CONNAUGHTON, Thomas Wolfe Tone",
+            "role": "Director",
+            "appointmentDate": "1 August 2018",
+            "resignationDate": "21 December 2023",
+            "address": "The Adelphi, 1-11 John Adam Street, London, WC2N 6HT",
+            "nationality": "Irish",
+            "occupation": "Business Executive",
+            "links": [
+              {
+                "linkText": "CONNAUGHTON, Thomas Wolfe Tone",
+                "url": "0-2301",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "DUFFETT-SMITH, James Michael",
+            "role": "Director",
+            "appointmentDate": "1 August 2010",
+            "resignationDate": "25 June 2013",
+            "address": "60 Celestial Gardens, London, United Kingdom, SE13 5RU",
+            "nationality": "British",
+            "occupation": "Legal Counsel",
+            "links": [
+              {
+                "linkText": "DUFFETT-SMITH, James Michael",
+                "url": "0-2356",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "EK, Daniel Georg",
+            "role": "Director",
+            "appointmentDate": "23 November 2007",
+            "resignationDate": "1 January 2016",
+            "address": "Birger Jarlsgatan 42, Stockholm, Stockholm, Sweden, SE-114 29",
+            "nationality": "Swedish",
+            "occupation": "Ceo",
+            "links": [
+              {
+                "linkText": "EK, Daniel Georg",
+                "url": "0-2411",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "GRANDELIUS, Peter",
+            "role": "Director",
+            "appointmentDate": "28 January 2019",
+            "resignationDate": "15 April 2019",
+            "address": "., Regeringsgatan 19, 111 53 Stockholm, Sweden",
+            "nationality": "Swedish",
+            "occupation": "Alternate Director",
+            "links": [
+              {
+                "linkText": "GRANDELIUS, Peter",
+                "url": "0-2466",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "SVOLGAARD, Jens Christian Grejs",
+            "role": "Director",
+            "appointmentDate": "16 July 2018",
+            "resignationDate": "15 April 2019",
+            "address": "61 Birger Jarlsgatan, Stockholm, Se-113 56, Sweden",
+            "nationality": "Danish",
+            "occupation": "Business Executive",
+            "links": [
+              {
+                "linkText": "SVOLGAARD, Jens Christian Grejs",
+                "url": "0-2521",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "VOGEL, Paul Aaron",
+            "role": "Director",
+            "appointmentDate": "9 December 2019",
+            "resignationDate": "29 March 2024",
+            "address": "150 Greenwich Street, New York, Ny 10007, United States",
+            "nationality": "American",
+            "occupation": "Finance Executive",
+            "links": [
+              {
+                "linkText": "VOGEL, Paul Aaron",
+                "url": "0-2576",
+                "linkType": "profile"
+              }
+            ]
+          },
+          {
+            "name": "WATTS, Angela Claire Mary",
+            "role": "Director",
+            "appointmentDate": "25 June 2013",
+            "resignationDate": "30 April 2018",
+            "address": "4th Floor, 25 Argyll Street, London, United Kingdom, W1F 7TU",
+            "nationality": "British",
+            "occupation": "Vp Global Communications",
+            "links": [
+              {
+                "linkText": "WATTS, Angela Claire Mary",
+                "url": "0-2631",
+                "linkType": "profile"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 8584,
+        "completion_tokens": 1888,
+        "total_tokens": 10472
+      }
+    },
+    "timestamp": 1753920418552,
+    "requestId": "92p8x8o8dx"
+  },
+  "99d11dddb1afce1b9e46eef1eef1cd851268449e59aab52a15a5492c5449c249": {
+    "data": {
+      "data": {
+        "progress": "Successfully extracted details for 12 officers including names, roles, appointment dates, resignation dates, addresses, and associated links. The list includes 10 directors and 2 secretaries with complete information for each person.",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 2576,
+        "completion_tokens": 256,
+        "total_tokens": 2832
+      }
+    },
+    "timestamp": 1753920424448,
+    "requestId": "92p8x8o8dx"
+  },
+  "b7feb77e4c84aa2871957c1c2101cb44780dcdb74bdc2941473d80ee6ab2441b": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-2022",
+            "description": "Link to Charges section for SPOTIFY LIMITED",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 8649,
+        "completion_tokens": 152,
+        "total_tokens": 8801
+      }
+    },
+    "timestamp": 1753920429523,
+    "requestId": "6hfs980p26f"
+  },
+  "90f38752140f02068300df0855a126c50038418d3a1f00fd3bc6362070f8033a": {
+    "data": {
+      "data": {
+        "charges": [
+          {
+            "description": "Contains fixed charge...",
+            "status": "Satisfied on 28 June 2016",
+            "createdDate": "17 January 2014",
+            "chargeholder": "Morgan Stanley Senior Funding,Inc (As Collateral Agent for Certain Secured Parties)"
+          },
+          {
+            "description": "First fixed charge the deposit and all the entitlements to...",
+            "status": "Satisfied on 14 February 2014",
+            "createdDate": "24 November 2009",
+            "chargeholder": "Nordea Bank Finland PLC, London Branch"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2995,
+        "completion_tokens": 234,
+        "total_tokens": 3229
+      }
+    },
+    "timestamp": 1753920438891,
+    "requestId": "1ml9byzym7c"
+  },
+  "aa7cb2300d7099bb940c7a9198418111e35832c1d1f1245612e10e0a86a8afc9": {
+    "data": {
+      "data": {
+        "progress": "Found 2 charges: (1) Morgan Stanley Senior Funding Inc charge (created 17 Jan 2014, satisfied 28 Jun 2016) (2) Nordea Bank Finland PLC charge (created 24 Nov 2009, satisfied 14 Feb 2014)",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 773,
+        "completion_tokens": 318,
+        "total_tokens": 1091
+      }
+    },
+    "timestamp": 1753920445218,
+    "requestId": "1ml9byzym7c"
+  },
+  "6e63babcd6161fd37b438607e92a91315f1b9586baaa15c36c3110f2e2355176": {
+    "data": {
+      "data": {
+        "filings": [
+          {
+            "date": "26 Sep 2024",
+            "description": "Confirmation statement made on 21 September 2024 with no updates",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-338",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "26 Sep 2024",
+            "description": "Register inspection address has been changed from 100 New Bridge Street London EC4V 6JA United Kingdom to 280 Bishopsgate London EC2M 4RB",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-356",
+                "pageCount": "1"
+              }
+            ]
+          },
+          {
+            "date": "26 Sep 2024",
+            "description": "Change of details for Spotify Technology S.A. as a person with significant control on 26 September 2024",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-374",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "17 Aug 2024",
+            "description": "Full accounts made up to 31 December 2023",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-392",
+                "pageCount": "37"
+              }
+            ]
+          },
+          {
+            "date": "19 Jun 2024",
+            "description": "Director's details changed for Sallie Elisabeth Deysel on 29 March 2024",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-410",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "10 Apr 2024",
+            "description": "Termination of appointment of Paul Aaron Vogel as a director on 29 March 2024",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-4",
+                "pageCount": "1"
+              }
+            ]
+          },
+          {
+            "date": "10 Apr 2024",
+            "description": "Appointment of Sallie Elisabeth Deysel as a director on 29 March 2024",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-445",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "22 Dec 2023",
+            "description": "Termination of appointment of Thomas Wolfe Tone Connaughton as a director on 21 December 2023",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-463",
+                "pageCount": "1"
+              }
+            ]
+          },
+          {
+            "date": "27 Sep 2023",
+            "description": "Confirmation statement made on 21 September 2023 with no updates",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-481",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "24 Jul 2023",
+            "description": "Full accounts made up to 31 December 2022",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-498",
+                "pageCount": "45"
+              }
+            ]
+          },
+          {
+            "date": "21 Jul 2023",
+            "description": "Director's details changed for Peter Grandelius on 19 June 2023",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-516",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "09 Nov 2022",
+            "description": "Change of details for Spotify Technology S.A. as a person with significant control on 7 November 2022",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-534",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "03 Oct 2022",
+            "description": "Confirmation statement made on 21 September 2022 with no updates",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-552",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "29 Jul 2022",
+            "description": "Full accounts made up to 31 December 2021",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-570",
+                "pageCount": "36"
+              }
+            ]
+          },
+          {
+            "date": "29 Sep 2021",
+            "description": "Confirmation statement made on 21 September 2021 with no updates",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-588",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "27 Jul 2021",
+            "description": "Full accounts made up to 31 December 2020",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-606",
+                "pageCount": "35"
+              }
+            ]
+          },
+          {
+            "date": "16 Dec 2020",
+            "description": "Statement of capital on 16 December 2020 GBP 1,000",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-626",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "14 Dec 2020",
+            "description": "Full accounts made up to 31 December 2019",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-648",
+                "pageCount": "40"
+              }
+            ]
+          },
+          {
+            "date": "03 Dec 2020",
+            "description": "Statement of capital following an allotment of shares on 12 November 2020 GBP 22,947,450",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-669",
+                "pageCount": "4"
+              }
+            ]
+          },
+          {
+            "date": "03 Dec 2020",
+            "description": "Statement of company's objects",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-690",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "03 Dec 2020",
+            "description": "Resolutions The sum of £22946450 be capitalised 12/11/2020 Resolution of alteration of Articles of Association",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-718",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "20 Nov 2020",
+            "description": "Statement by Directors",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-745",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "20 Nov 2020",
+            "description": "Solvency Statement dated 12/11/20",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-759",
+                "pageCount": "3"
+              }
+            ]
+          },
+          {
+            "date": "20 Nov 2020",
+            "description": "Resolutions Resolution of reduction in issued share capital",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-780",
+                "pageCount": "2"
+              }
+            ]
+          },
+          {
+            "date": "21 Oct 2020",
+            "description": "Confirmation statement made on 21 September 2020 with no updates",
+            "documentLinks": [
+              {
+                "linkText": "View PDF",
+                "url": "0-804",
+                "pageCount": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 11149,
+        "completion_tokens": 2318,
+        "total_tokens": 13467
+      }
+    },
+    "timestamp": 1753920525809,
+    "requestId": "fzwxj5cmxtq"
+  },
+  "104dd4197afffaf1af661bc998af1b6a1bc9b92e84a63bd309fde3e8cebcceef": {
+    "data": {
+      "data": {
+        "progress": "Successfully extracted 25 filings with dates, descriptions, and PDF links including page counts",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 3001,
+        "completion_tokens": 226,
+        "total_tokens": 3227
+      }
+    },
+    "timestamp": 1753920533436,
+    "requestId": "fzwxj5cmxtq"
+  },
+  "e6337e3f83bff3c35be27f57325c2cf81a443e8d5df95012fb4619f53037549b": {
+    "data": {
+      "data": {
+        "links": [
+          {
+            "url": "0-338",
+            "text": "View PDF Confirmation statement made on 21 September 2024 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-356",
+            "text": "View PDF Register inspection address has been changed from 100 New Bridge Street London EC4V 6JA United Kingdom to 280 Bishopsgate London EC2M 4RB",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-374",
+            "text": "View PDF Change of details for Spotify Technology S.A. as a person with significant control on 26 September 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-392",
+            "text": "View PDF Full accounts made up to 31 December 2023",
+            "pageCount": "37 pages"
+          },
+          {
+            "url": "0-410",
+            "text": "View PDF Director's details changed for Sallie Elisabeth Deysel on 29 March 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-4",
+            "text": "View PDF Termination of appointment of Paul Aaron Vogel as a director on 29 March 2024",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-445",
+            "text": "View PDF Appointment of Sallie Elisabeth Deysel as a director on 29 March 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-463",
+            "text": "View PDF Termination of appointment of Thomas Wolfe Tone Connaughton as a director on 21 December 2023",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-481",
+            "text": "View PDF Confirmation statement made on 21 September 2023 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-498",
+            "text": "View PDF Full accounts made up to 31 December 2022",
+            "pageCount": "45 pages"
+          },
+          {
+            "url": "0-516",
+            "text": "View PDF Director's details changed for Peter Grandelius on 19 June 2023",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-534",
+            "text": "View PDF Change of details for Spotify Technology S.A. as a person with significant control on 7 November 2022",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-552",
+            "text": "View PDF Confirmation statement made on 21 September 2022 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-570",
+            "text": "View PDF Full accounts made up to 31 December 2021",
+            "pageCount": "36 pages"
+          },
+          {
+            "url": "0-588",
+            "text": "View PDF Confirmation statement made on 21 September 2021 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-606",
+            "text": "View PDF Full accounts made up to 31 December 2020",
+            "pageCount": "35 pages"
+          },
+          {
+            "url": "0-626",
+            "text": "View PDF Statement of capital on 16 December 2020 GBP 1,000",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-648",
+            "text": "View PDF Full accounts made up to 31 December 2019",
+            "pageCount": "40 pages"
+          },
+          {
+            "url": "0-669",
+            "text": "View PDF Statement of capital following an allotment of shares on 12 November 2020 GBP 22,947,450",
+            "pageCount": "4 pages"
+          },
+          {
+            "url": "0-690",
+            "text": "View PDF Statement of company's objects",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-718",
+            "text": "View PDF Resolutions The sum of £22946450 be capitalised 12/11/2020 Resolution of alteration of Articles of Association",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-745",
+            "text": "View PDF Statement by Directors",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-759",
+            "text": "View PDF Solvency Statement dated 12/11/20",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-780",
+            "text": "View PDF Resolutions Resolution of reduction in issued share capital",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-804",
+            "text": "View PDF Confirmation statement made on 21 September 2020 with no updates",
+            "pageCount": "3 pages"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 11089,
+        "completion_tokens": 1435,
+        "total_tokens": 12524
+      }
+    },
+    "timestamp": 1753920553711,
+    "requestId": "9w2dsw66rck"
+  },
+  "354356bafdd0721df5ba697cafa8b24a9a2ec9703b915ceba5e11182a357e3a5": {
+    "data": {
+      "data": {
+        "progress": "25 PDF links extracted with link text and page counts, but URLs appear incomplete (showing only partial values like \"0-338\" instead of full URLs)",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 2196,
+        "completion_tokens": 251,
+        "total_tokens": 2447
+      }
+    },
+    "timestamp": 1753920559965,
+    "requestId": "9w2dsw66rck"
+  },
+  "c71b0132a3a19bcb9a5f3624a70c267736edcc4b5151b538f079f4c24d5a7a3e": {
+    "data": {
+      "data": {
+        "links": [
+          {
+            "url": "0-338",
+            "text": "View PDF Confirmation statement made on 21 September 2024 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-356",
+            "text": "View PDF Register inspection address has been changed from 100 New Bridge Street London EC4V 6JA United Kingdom to 280 Bishopsgate London EC2M 4RB",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-374",
+            "text": "View PDF Change of details for Spotify Technology S.A. as a person with significant control on 26 September 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-392",
+            "text": "View PDF Full accounts made up to 31 December 2023",
+            "pageCount": "37 pages"
+          },
+          {
+            "url": "0-410",
+            "text": "View PDF Director's details changed for Sallie Elisabeth Deysel on 29 March 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-4",
+            "text": "View PDF Termination of appointment of Paul Aaron Vogel as a director on 29 March 2024",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-445",
+            "text": "View PDF Appointment of Sallie Elisabeth Deysel as a director on 29 March 2024",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-463",
+            "text": "View PDF Termination of appointment of Thomas Wolfe Tone Connaughton as a director on 21 December 2023",
+            "pageCount": "1 page"
+          },
+          {
+            "url": "0-481",
+            "text": "View PDF Confirmation statement made on 21 September 2023 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-498",
+            "text": "View PDF Full accounts made up to 31 December 2022",
+            "pageCount": "45 pages"
+          },
+          {
+            "url": "0-516",
+            "text": "View PDF Director's details changed for Peter Grandelius on 19 June 2023",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-534",
+            "text": "View PDF Change of details for Spotify Technology S.A. as a person with significant control on 7 November 2022",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-552",
+            "text": "View PDF Confirmation statement made on 21 September 2022 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-570",
+            "text": "View PDF Full accounts made up to 31 December 2021",
+            "pageCount": "36 pages"
+          },
+          {
+            "url": "0-588",
+            "text": "View PDF Confirmation statement made on 21 September 2021 with no updates",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-606",
+            "text": "View PDF Full accounts made up to 31 December 2020",
+            "pageCount": "35 pages"
+          },
+          {
+            "url": "0-626",
+            "text": "View PDF Statement of capital on 16 December 2020 GBP 1,000",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-648",
+            "text": "View PDF Full accounts made up to 31 December 2019",
+            "pageCount": "40 pages"
+          },
+          {
+            "url": "0-669",
+            "text": "View PDF Statement of capital following an allotment of shares on 12 November 2020 GBP 22,947,450",
+            "pageCount": "4 pages"
+          },
+          {
+            "url": "0-690",
+            "text": "View PDF Statement of company's objects",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-718",
+            "text": "View PDF Resolutions The sum of £22946450 be capitalised 12/11/2020 Resolution of alteration of Articles of Association",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-745",
+            "text": "View PDF Statement by Directors",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-759",
+            "text": "View PDF Solvency Statement dated 12/11/20",
+            "pageCount": "3 pages"
+          },
+          {
+            "url": "0-780",
+            "text": "View PDF Resolutions Resolution of reduction in issued share capital",
+            "pageCount": "2 pages"
+          },
+          {
+            "url": "0-804",
+            "text": "View PDF Confirmation statement made on 21 September 2020 with no updates",
+            "pageCount": "3 pages"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 11112,
+        "completion_tokens": 1435,
+        "total_tokens": 12547
+      }
+    },
+    "timestamp": 1753920580788,
+    "requestId": "v11ow5esu99"
+  },
+  "dd81715d78c08349d4e48f522806d085572bdbe0d072d3e3e0cdeb31f18eaefc": {
+    "data": {
+      "data": {
+        "progress": "Successfully extracted PDF link URL, link text, and page count from the HTML. Found link with class 'download' containing URL, text 'View PDF...' and page count '1 page'.",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 2219,
+        "completion_tokens": 323,
+        "total_tokens": 2542
+      }
+    },
+    "timestamp": 1753920588996,
+    "requestId": "v11ow5esu99"
+  },
+  "249813f5b1494bb0a8c2b404439eb608a88fa5b5a72ad88e1b8d8cd07411c76c": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-90",
+            "description": "Button to accept analytics cookies in the cookie banner",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2806,
+        "completion_tokens": 183,
+        "total_tokens": 2989
+      }
+    },
+    "timestamp": 1753920618893,
+    "requestId": "kon3jieoicf"
+  },
+  "502ef0f31dcea1e2bf268e896cbb91805f2e3d1e25b61378c6912805b7c2fc0c": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-4",
+            "description": "searchbox for entering company name, number or officer name",
+            "method": "fill",
+            "arguments": [
+              "Darsh"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2729,
+        "completion_tokens": 147,
+        "total_tokens": 2876
+      }
+    },
+    "timestamp": 1753920627845,
+    "requestId": "9rk5s2rvuqb"
+  },
+  "1815677ffd06bce3a64b5c1b99f650e06bd4d4d58186af0a62dace0ff9100d9a": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-5",
+            "description": "Search button in the main search area",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2734,
+        "completion_tokens": 181,
+        "total_tokens": 2915
+      }
+    },
+    "timestamp": 1753920634192,
+    "requestId": "nldfm4l0fxp"
+  },
+  "1e7a0ba94cc22bc684502f09881a1b7ac82c55289a1ee6876ba4b8067c5e289a": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-527",
+            "description": "Link to first company result 'DARSH LTD'",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5087,
+        "completion_tokens": 185,
+        "total_tokens": 5272
+      }
+    },
+    "timestamp": 1753920643481,
+    "requestId": "ap6wzbg4f85"
+  },
+  "953f7e8015a9029424276d68f3dc22ad5359e44f72a24ced9d72f71c01881ece": {
+    "data": {
+      "data": {
+        "companyName": "DARSH LTD",
+        "companyNumber": "13914683",
+        "status": "Active",
+        "incorporationDate": "14 February 2022",
+        "companyType": "Private limited Company",
+        "registeredAddress": "2 Holdiford Road, Stafford, Staffordshire, United Kingdom, ST17 0UX"
+      },
+      "usage": {
+        "prompt_tokens": 2727,
+        "completion_tokens": 214,
+        "total_tokens": 2941
+      }
+    },
+    "timestamp": 1753920653475,
+    "requestId": "vc7hicmhx7q"
+  },
+  "0401eb3f05b3bd22a207b50847010d35f231c81d472f465b297dbbfa7d6d3fac": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "1052",
+            "description": "Link containing 'Filing history for DARSH LTD (13914683)'",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3129,
+        "completion_tokens": 190,
+        "total_tokens": 3319
+      }
+    },
+    "timestamp": 1753920659095,
+    "requestId": "f6u5lchgulj"
+  },
+  "e16e4d8138762af89fdae035b2c05e822ccaaa74e200935788e9a73d903a5ce8": {
+    "data": {
+      "data": {
+        "elements": [
+          {
+            "elementId": "0-1446",
+            "description": "Link to view People information for DARSH LTD",
+            "method": "click",
+            "arguments": []
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5417,
+        "completion_tokens": 156,
+        "total_tokens": 5573
+      }
+    },
+    "timestamp": 1753920673569,
+    "requestId": "ddnylg2r1kv"
+  },
+  "4980929b0d5eb9189482718a1973a355a55401e45ca4663e2594277854cb2c1f": {
+    "data": {
+      "data": {
+        "officers": [
+          {
+            "name": "HARLEY, Thomas David",
+            "role": "Director",
+            "appointmentDate": "14 February 2022",
+            "resignationDate": null,
+            "address": "2 Holdiford Road, Stafford, Staffordshire, United Kingdom, ST17 0UX",
+            "nationality": "British",
+            "occupation": "Director",
+            "dateOfBirth": "July 1980",
+            "links": [
+              {
+                "linkText": "HARLEY, Thomas David",
+                "url": "0-2027",
+                "linkType": "profile"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 3008,
+        "completion_tokens": 251,
+        "total_tokens": 3259
+      }
+    },
+    "timestamp": 1753920688752,
+    "requestId": "jdxm9dkk7r"
+  },
+  "78fffdfca8b846fbcb0c77114ba871b127e6f62b8c0843e7aa0d1714ee40af4a": {
+    "data": {
+      "data": {
+        "progress": "Extracted complete officer information for HARLEY, Thomas David including full name, role, appointment date, address, and associated links",
+        "completed": true
+      },
+      "usage": {
+        "prompt_tokens": 937,
+        "completion_tokens": 317,
+        "total_tokens": 1254
+      }
+    },
+    "timestamp": 1753920695304,
+    "requestId": "jdxm9dkk7r"
+  },
+  "fdb86f806b12c3dadad23656d53f8390ea4b0b64e99b43e1d57d6ba0d0ae1a85": {
+    "data": {
+      "data": {
+        "elements": []
+      },
+      "usage": {
+        "prompt_tokens": 3073,
+        "completion_tokens": 129,
+        "total_tokens": 3202
+      }
+    },
+    "timestamp": 1753920701755,
+    "requestId": "60ydl3ljopy"
+  },
+  "d97e0d9825adebfc82cd0f502e4e14b46cb0a886fc431e3e684021f0f675bdaa": {
+    "data": {
+      "data": {
+        "charges": [
+          {
+            "description": "0 charges registered (0 outstanding, 0 satisfied, 0 part satisfied)",
+            "status": "None"
+          }
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 2135,
+        "completion_tokens": 137,
+        "total_tokens": 2272
+      }
+    },
+    "timestamp": 1753920709545,
+    "requestId": "ykkxgxa5ua"
   }
 }
