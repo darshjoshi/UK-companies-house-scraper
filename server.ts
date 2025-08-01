@@ -786,20 +786,28 @@ app.use((error: Error, req: express.Request, res: express.Response, next: expres
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const HOST = process.env.HOST || '0.0.0.0'; // Railway-friendly host binding
+const isProduction = process.env.NODE_ENV === 'production';
+const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN 
+  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` 
+  : `http://localhost:${PORT}`;
 
-app.listen(PORT, () => {
-  Logger.info(`Enhanced Company Intelligence Server started`, {
+app.listen(PORT, HOST, () => {
+  Logger.info(`🚀 Enhanced Company Intelligence Server started`, {
     port: PORT,
+    host: HOST,
     version: '3.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    browserMode: process.env.BROWSERBASE_API_KEY ? 'BrowserBase (Remote)' : 'Local',
+    deployment: process.env.RAILWAY_ENVIRONMENT || 'local'
   });
   
-  Logger.info('Available endpoints:', {
-    health: `http://localhost:${PORT}/api/health`,
-    info: `http://localhost:${PORT}/api/info`,
-    webInterface: `http://localhost:${PORT}/`,
-    enhancedReport: `POST http://localhost:${PORT}/api/enhanced-report`
+  Logger.info('📡 Available endpoints:', {
+    health: `${baseUrl}/api/health`,
+    info: `${baseUrl}/api/info`,
+    webInterface: `${baseUrl}/`,
+    enhancedReport: `POST ${baseUrl}/api/enhanced-report`
   });
   
   Logger.info('New features in v3.0.0:', [

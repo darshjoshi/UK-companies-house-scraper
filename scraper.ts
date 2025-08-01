@@ -909,16 +909,23 @@ class CompaniesHouseScraper {
   private peopleExtractor: PeopleExtractor;
 
   constructor() {
+    // Use BrowserBase if API key is available, otherwise fallback to LOCAL
+    const useBrowserBase = process.env.BROWSERBASE_API_KEY && process.env.BROWSERBASE_PROJECT_ID;
+    
     this.stagehand = new Stagehand({
-      env: "LOCAL",
+      env: useBrowserBase ? "BROWSERBASE" : "LOCAL",
+      apiKey: useBrowserBase ? process.env.BROWSERBASE_API_KEY : undefined,
+      projectId: useBrowserBase ? process.env.BROWSERBASE_PROJECT_ID : undefined,
       modelName: "claude-3-5-sonnet-20241022",
       modelClientOptions: {
         apiKey: process.env.ANTHROPIC_API_KEY
       },
       enableCaching: true,
       verbose: 1,
-      domSettleTimeoutMs: 8000
+      domSettleTimeoutMs: 10000 // Increased for remote browser
     });
+    
+    console.log(`🌐 Using ${useBrowserBase ? 'BrowserBase (Remote)' : 'Local'} browser environment`);
   }
 
   async initialize(): Promise<void> {
