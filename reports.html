@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Reports - UK Companies House Scraper</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/saved-reports.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/people-display.css">
+    <style>
+        .reports-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+        }
+        
+        .reports-header h1 {
+            margin: 0;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        .reports-header p {
+            text-align: center;
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            color: #0056b3;
+        }
+        
+        .reports-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            max-height: 90vh;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .detail-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-section h4 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .ai-summary-content {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .modal-actions {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <div class="container">
+        <a href="/" class="back-link">
+            ← Back to Company Scraper
+        </a>
+        
+        <header class="reports-header animated-gradient">
+            <div class="header-content fade-in">
+                <h1 class="bounce-in">📊 Saved Company Reports</h1>
+                <p class="header-subtitle slide-in-up">Manage and explore your saved company intelligence reports</p>
+                <a href="/" class="back-link hover-lift">← Back to Search</a>
+            </div>
+        </header>
+        
+        <!-- Session Status -->
+        <div id="sessionStatus" class="alert alert-info" style="display: none;">
+            <span class="icon">ℹ️</span>
+            <span id="sessionStatusText">Loading session information...</span>
+        </div>
+        
+        <!-- Database Status -->
+        <div id="databaseStatus" class="alert" style="display: none;">
+            <span class="icon">⚠️</span>
+            <span id="databaseStatusText">Checking database connection...</span>
+        </div>
+        
+        <!-- Statistics -->
+        <div id="reportsStats" class="reports-stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalReportsCount">0</div>
+                <div class="stat-label">Total Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="recentReportsCount">0</div>
+                <div class="stat-label">Recent (7 days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgQualityScore">0</div>
+                <div class="stat-label">Avg Quality Score</div>
+            </div>
+        </div>
+        
+        <!-- Search and Controls -->
+        <div class="saved-reports-controls">
+            <input type="text" id="searchReports" placeholder="Search reports by company name or number..." class="search-input">
+            <button id="refreshReports" class="btn btn-secondary">🔄 Refresh</button>
+            <button id="exportReports" class="btn btn-primary">📊 Export All</button>
+        </div>
+        
+        <!-- Reports List -->
+        <div id="reportsList" class="saved-reports-list">
+            <div class="loading-placeholder">Loading reports...</div>
+        </div>
+        
+        <!-- Pagination -->
+        <div id="pagination" class="pagination" style="display: none;">
+            <button id="prevPage" class="btn btn-secondary">← Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" class="btn btn-secondary">Next →</button>
+        </div>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div id="reportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Report Details</h3>
+                <button id="closeModal" class="btn btn-secondary">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Report content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/reports.js"></script>
+</body>
+</html>
