@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import { runEnhancedCompaniesScraper, testPDFExtraction } from './scraper.js';
 import { getEnhancedAnthropicSummary } from './summarizer.js';
+import { databaseService, SaveReportRequest, GetReportsRequest } from './database.js';
 
 const app = express();
 app.use(express.json());
@@ -426,6 +427,36 @@ app.post('/api/enhanced-report', async (req, res) => {
       pagesScraped: rawData.filing?.pagesScraped || 1
     });
 
+    // Save to database if available
+    let reportId: string | null = null;
+    if (databaseService.isAvailable()) {
+      try {
+        const sessionId = await databaseService.createOrUpdateSession(
+          req.ip || req.connection.remoteAddress || 'anonymous'
+        );
+        
+        const saveRequest: SaveReportRequest = {
+          companyNumber: rawData.overview?.companyNumber || company.trim(),
+          companyName: rawData.overview?.companyName || company.trim(),
+          sessionId,
+          extractionConfig: {
+            maxPages: validatedMaxPages,
+            maxPeoplePages: validatedMaxPeoplePages,
+            enableRiskAssessment: true
+          },
+          rawData,
+          aiSummary: llmSummary,
+          qualityScore: qualityAssessment.score,
+          extractionDurationMs: processingTime
+        };
+        
+        reportId = await databaseService.saveReport(saveRequest);
+        Logger.info(`Report saved to database`, { reportId, sessionId });
+      } catch (dbError) {
+        Logger.warn('Failed to save report to database', { error: dbError.message });
+      }
+    }
+
     // Enhanced response
     res.json({
       success: true,
@@ -450,6 +481,11 @@ app.post('/api/enhanced-report', async (req, res) => {
           pdfExtractionSuccess: (filingStats?.pdfSuccessRate ?? 0) > 0,
           pagesRequested: validatedMaxPages,
           pagesScraped: rawData.filing?.pagesScraped || 1
+        },
+        database: {
+          saved: reportId !== null,
+          reportId: reportId,
+          storageEnabled: databaseService.isAvailable()
         }
       }
     });
@@ -647,6 +683,244 @@ app.get('/api/page-count-estimate/:companyNumber', async (req, res) => {
   }
 });
 
+// ===== DATABASE API ENDPOINTS =====
+
+// Check if a report already exists for a company
+app.get('/api/reports/check/:companyIdentifier', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { companyIdentifier } = req.params;
+    const { sessionId } = req.query;
+    
+    const existingReport = await databaseService.checkExistingReport(companyIdentifier, sessionId as string);
+    
+    res.json({
+      success: true,
+      exists: !!existingReport,
+      report: existingReport ? {
+        id: existingReport.id,
+        company_name: existingReport.company_name,
+        extraction_timestamp: existingReport.extraction_timestamp,
+        quality_score: existingReport.quality_score
+      } : null
+    });
+    
+  } catch (error) {
+    Logger.error('Error checking existing report:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check existing report',
+      code: 'CHECK_ERROR'
+    });
+  }
+});
+
+// Get saved reports for a session
+app.get('/api/reports', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { sessionId, companyNumber, limit, offset, dateFrom, dateTo } = req.query;
+    
+    const request: GetReportsRequest = {
+      sessionId: sessionId as string,
+      companyNumber: companyNumber as string,
+      limit: limit ? parseInt(limit as string) : 20,
+      offset: offset ? parseInt(offset as string) : 0,
+      dateFrom: dateFrom as string,
+      dateTo: dateTo as string
+    };
+    
+    const reports = await databaseService.getReports(request);
+    
+    Logger.info(`Retrieved ${reports.length} reports`, { sessionId, companyNumber });
+    
+    res.json({
+      success: true,
+      reports,
+      count: reports.length,
+      pagination: {
+        limit: request.limit,
+        offset: request.offset
+      }
+    });
+  } catch (error) {
+    Logger.error('Error retrieving reports', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve reports',
+      code: 'DATABASE_ERROR'
+    });
+  }
+});
+
+// Get a specific report by ID
+app.get('/api/reports/:reportId', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { reportId } = req.params;
+    const report = await databaseService.getReportById(reportId);
+    
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        error: 'Report not found',
+        code: 'REPORT_NOT_FOUND'
+      });
+    }
+    
+    Logger.info(`Retrieved report`, { reportId, companyNumber: report.company_number });
+    
+    res.json({
+      success: true,
+      report
+    });
+  } catch (error) {
+    Logger.error('Error retrieving report by ID', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve report',
+      code: 'DATABASE_ERROR'
+    });
+  }
+});
+
+// Delete a report
+app.delete('/api/reports/:reportId', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { reportId } = req.params;
+    const { sessionId } = req.query;
+    
+    const deleted = await databaseService.deleteReport(reportId, sessionId as string);
+    
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        error: 'Report not found or access denied',
+        code: 'REPORT_NOT_FOUND'
+      });
+    }
+    
+    Logger.info(`Deleted report`, { reportId, sessionId });
+    
+    res.json({
+      success: true,
+      message: 'Report deleted successfully'
+    });
+  } catch (error) {
+    Logger.error('Error deleting report', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete report',
+      code: 'DATABASE_ERROR'
+    });
+  }
+});
+
+// Search reports
+app.get('/api/reports/search/:searchTerm', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { searchTerm } = req.params;
+    const { sessionId, limit } = req.query;
+    
+    const reports = await databaseService.searchReports(
+      searchTerm,
+      sessionId as string,
+      limit ? parseInt(limit as string) : 10
+    );
+    
+    Logger.info(`Search completed`, { searchTerm, resultsCount: reports.length });
+    
+    res.json({
+      success: true,
+      searchTerm,
+      reports,
+      count: reports.length
+    });
+  } catch (error) {
+    Logger.error('Error searching reports', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to search reports',
+      code: 'DATABASE_ERROR'
+    });
+  }
+});
+
+// Get session statistics
+app.get('/api/sessions/:sessionId/stats', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { sessionId } = req.params;
+    const stats = await databaseService.getSessionStats(sessionId);
+    
+    Logger.info(`Retrieved session stats`, { sessionId, ...stats });
+    
+    res.json({
+      success: true,
+      sessionId,
+      stats
+    });
+  } catch (error) {
+    Logger.error('Error retrieving session stats', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve session statistics',
+      code: 'DATABASE_ERROR'
+    });
+  }
+});
+
+// ===== FRONTEND ROUTES =====
+
+// Serve reports page
+app.get('/reports', (req, res) => {
+  res.sendFile('reports.html', { root: '.' });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   const healthStatus = {
@@ -666,7 +940,8 @@ app.get('/api/health', (req, res) => {
     dependencies: {
       anthropic: !!process.env.ANTHROPIC_API_KEY,
       stagehand: true,
-      browserbase: !!process.env.BROWSERBASE_API_KEY
+      browserbase: !!process.env.BROWSERBASE_API_KEY,
+      supabase: databaseService.isAvailable()
     }
   };
 
