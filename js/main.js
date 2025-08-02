@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize performance monitoring
     initPerformanceMonitoring();
+    
+    // Check if a report ID is provided in URL parameters
+    checkForReportIdInURL();
 });
 
 async function extractCompanyData() {
@@ -22,6 +25,12 @@ async function extractCompanyData() {
     const loadingSection = document.getElementById('loadingSection');
     const resultsContainer = document.getElementById('resultsContainer');
     const searchButton = document.getElementById('searchButton');
+
+    // Check for existing report first
+    const shouldProceed = await checkForDuplicateReport(companyName);
+    if (!shouldProceed) {
+        return; // User chose not to proceed
+    }
 
     loadingSection.style.display = 'block';
     loadingSection.classList.add('fade-in');
@@ -599,4 +608,73 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// Check for reportId in URL parameters and load the report
+function checkForReportIdInURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reportId = urlParams.get('reportId');
+    
+    if (reportId) {
+        console.log('Found reportId in URL:', reportId);
+        // Load the report automatically
+        viewSavedReport(reportId);
+        
+        // Optionally, clean up the URL (remove the reportId parameter)
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+}
+
+// Check for duplicate reports before extraction
+async function checkForDuplicateReport(companyName) {
+    if (!companyName) return true;
+    
+    try {
+        let url = `/api/reports/check/${encodeURIComponent(companyName)}`;
+        if (userSessionId) {
+            url += `?sessionId=${userSessionId}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.success && data.exists) {
+            const existingReport = data.report;
+            const extractionDate = new Date(existingReport.extraction_timestamp).toLocaleDateString();
+            
+            const message = `A report for "${existingReport.company_name}" already exists:\n\n` +
+                          `• Extracted: ${extractionDate}\n` +
+                          `• Quality Score: ${existingReport.quality_score}/100\n\n` +
+                          `Would you like to:\n` +
+                          `• Click "OK" to create a new report (will replace the old one)\n` +
+                          `• Click "Cancel" to view the existing report instead`;
+            
+            const shouldProceed = confirm(message);
+            
+            if (!shouldProceed) {
+                // User chose to view existing report
+                viewSavedReport(existingReport.id);
+                return false;
+            }
+        }
+        
+        return true; // Proceed with extraction
+    } catch (error) {
+        console.error('Error checking for duplicates:', error);
+        return true; // If check fails, proceed anyway
+    }
+}
+
+// Extract company number from input (handles both company names and numbers)
+function extractCompanyNumber(input) {
+    // If input looks like a company number (digits), return it
+    const numberMatch = input.match(/\b\d{8}\b/);
+    if (numberMatch) {
+        return numberMatch[0];
+    }
+    
+    // For company names, we can't easily extract the number
+    // So we'll use the input as-is for the check
+    return input.trim();
 }

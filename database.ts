@@ -121,6 +121,45 @@ class DatabaseService {
   }
 
   /**
+   * Check if a report already exists for a company
+   */
+  async checkExistingReport(companyIdentifier: string, sessionId?: string): Promise<CompanyReport | null> {
+    if (!this.isEnabled) return null;
+
+    try {
+      // Check if it's a company number (8 digits) or company name
+      const isCompanyNumber = /^\d{8}$/.test(companyIdentifier);
+      
+      let query = this.supabase
+        .from('company_reports')
+        .select('*')
+        .eq('status', 'completed')
+        .order('extraction_timestamp', { ascending: false })
+        .limit(1);
+
+      if (isCompanyNumber) {
+        query = query.eq('company_number', companyIdentifier);
+      } else {
+        // Search by company name (case insensitive)
+        query = query.ilike('company_name', `%${companyIdentifier}%`);
+      }
+
+      // If session provided, check for that session specifically
+      if (sessionId) {
+        query = query.eq('user_session_id', sessionId);
+      }
+
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      return data && data.length > 0 ? data[0] : null;
+    } catch (error) {
+      console.error('Error checking existing report:', error);
+      return null;
+    }
+  }
+
+  /**
    * Save a company report to the database
    */
   async saveReport(request: SaveReportRequest): Promise<string | null> {

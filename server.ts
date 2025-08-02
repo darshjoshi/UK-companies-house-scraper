@@ -685,6 +685,43 @@ app.get('/api/page-count-estimate/:companyNumber', async (req, res) => {
 
 // ===== DATABASE API ENDPOINTS =====
 
+// Check if a report already exists for a company
+app.get('/api/reports/check/:companyIdentifier', async (req, res) => {
+  if (!databaseService.isAvailable()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database service not available',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
+  try {
+    const { companyIdentifier } = req.params;
+    const { sessionId } = req.query;
+    
+    const existingReport = await databaseService.checkExistingReport(companyIdentifier, sessionId as string);
+    
+    res.json({
+      success: true,
+      exists: !!existingReport,
+      report: existingReport ? {
+        id: existingReport.id,
+        company_name: existingReport.company_name,
+        extraction_timestamp: existingReport.extraction_timestamp,
+        quality_score: existingReport.quality_score
+      } : null
+    });
+    
+  } catch (error) {
+    Logger.error('Error checking existing report:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check existing report',
+      code: 'CHECK_ERROR'
+    });
+  }
+});
+
 // Get saved reports for a session
 app.get('/api/reports', async (req, res) => {
   if (!databaseService.isAvailable()) {

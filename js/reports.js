@@ -307,7 +307,12 @@ async function deleteReport(reportId) {
     }
     
     try {
-        const response = await fetch(`/api/reports/${reportId}?sessionId=${userSessionId}`, {
+        let url = `/api/reports/${reportId}`;
+        if (userSessionId) {
+            url += `?sessionId=${userSessionId}`;
+        }
+        
+        const response = await fetch(url, {
             method: 'DELETE'
         });
         
@@ -324,7 +329,9 @@ async function deleteReport(reportId) {
         }
         
         // Refresh stats and reports
-        await loadSessionStats();
+        if (userSessionId) {
+            await loadSessionStats();
+        }
         await loadReports(currentPage);
         
     } catch (error) {
